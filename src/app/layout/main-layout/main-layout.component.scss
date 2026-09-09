@@ -1,0 +1,20 @@
+.app-sidebar {
+	display: contents;
+}
+
+@media (max-width: 639px) {
+	.app-sidebar {
+		bottom: 0;
+		display: block;
+		height: 4.5rem !important;
+		left: 0;
+		position: fixed;
+		width: 100%;
+		z-index: 40;
+	}
+
+	.app-main {
+		padding-bottom: 4.5rem;
+		width: 100%;
+	}
+}

@@ -1,0 +1,70 @@
+<section
+  class="flex h-screen flex-col items-center justify-center bg-gray-100 overflow-hidden"
+>
+  <!-- Camada da Imagem de Fundo com Desfoque -->
+  <div
+    class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c')] bg-cover bg-center blur-sm"
+  ></div>
+
+  <!-- Camada de sobreposição escurecida (opcional, para dar mais contraste) -->
+  <div class="absolute inset-0 bg-black/40"></div>
+
+  <div
+    class="relative z-10 w-full max-w-sm rounded-lg bg-gray-100 p-8 shadow-md"
+  >
+    <div class="mb-6 pb-4 border-b border-gray-300">
+      <h2 class="text-3xl text-gray-500 font-semibold">Faça Login</h2>
+      <p class="text-gray-400">
+        Insira suas credenciais para acessar sua conta.
+      </p>
+    </div>
+    <form [formGroup]="loginForm" (ngSubmit)="entrar()">
+      <div
+        class="flex min-h-11 items-center rounded-lg border border-gray-300 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500"
+      >
+        <label
+          for="email"
+          class="mb-1 p-4 block text-sm font-medium text-gray-600 cursor-pointer"
+          >Email</label
+        >
+        <input
+          type="email"
+          id="email"
+          name="email"
+          formControlName="email"
+          class="w-full rounded-r-lg p-2.5 text-sm text-gray-800 outline-none placeholder-gray-400"
+        />
+      </div>
+      <div
+        class="flex min-h-11 items-center rounded-lg border border-gray-300 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 mt-4"
+      >
+        <label
+          for="senha"
+          class="mb-1 p-4 block text-sm font-medium text-gray-600 cursor-pointer"
+          >Senha</label
+        >
+        <input
+          type="password"
+          id="senha"
+          name="senha"
+          formControlName="senha"
+          class="w-full rounded-r-lg p-2.5 text-sm text-gray-800 outline-none placeholder-gray-400"
+        />
+      </div>
+      <div>
+        <button
+          type="submit"
+          class="w-full rounded-lg bg-blue-600 py-5 mt-5 text-sm font-medium text-white transition hover:bg-blue-700 cursor-pointer"
+        >
+          Login
+        </button>
+      </div>
+    </form>
+
+    @if (mensagemErro) {
+      <p class="mt-4 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
+        {{ mensagemErro }}
+      </p>
+    }
+  </div>
+</section>

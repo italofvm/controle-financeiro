@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+    <clipPath id="circle">
+      <circle cx="60" cy="60" r="60" />
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <circle cx="60" cy="60" r="60" fill="url(#bgGrad)" />
+
+  <!-- Body -->
+  <ellipse cx="60" cy="105" rx="30" ry="20" fill="rgba(255,255,255,0.25)" clip-path="url(#circle)" />
+
+  <!-- Head -->
+  <circle cx="60" cy="48" r="20" fill="rgba(255,255,255,0.9)" />
+
+  <!-- Face details -->
+  <circle cx="53" cy="46" r="2.5" fill="#4f46e5" />
+  <circle cx="67" cy="46" r="2.5" fill="#4f46e5" />
+  <path d="M 53 55 Q 60 61 67 55" stroke="#4f46e5" stroke-width="2" fill="none" stroke-linecap="round" />
+</svg>

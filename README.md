@@ -1,59 +1,152 @@
-# ControleFinanceiro
+# Meu Controle Financeiro
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
+Aplicação web responsiva para organizar receitas, despesas e categorias. Desenvolvida como projeto de aprendizado com Angular, consumindo uma API simulada localmente.
 
-## Development server
+> Este projeto utiliza autenticação e persistência simuladas. Não está preparado para uso em produção.
 
-To start a local development server, run:
+## Funcionalidades
 
-```bash
-ng serve
-```
+- Login com sessão local e proteção de rotas.
+- Dashboard mensal com saldo, receitas, despesas, últimas movimentações e resumo por categoria.
+- Cadastro, edição, listagem, filtro, paginação e exclusão de movimentações.
+- Cadastro, edição, listagem e exclusão de categorias.
+- Interface de preferências de moeda e início do ciclo mensal.
+- Cabeçalho com título dinâmico da rota e menu de perfil.
+- Interface de perfil para edição de dados pessoais e senha.
+- Layout responsivo com sidebar adaptada para telas pequenas.
+- Estados de carregamento, mensagens de sucesso/erro e modais de confirmação.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Tecnologias
 
-## Code scaffolding
+- [Angular 19](https://angular.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS 4](https://tailwindcss.com/)
+- [Lucide Angular](https://lucide.dev/guide/packages/lucide-angular)
+- [RxJS](https://rxjs.dev/)
+- [json-server](https://github.com/typicode/json-server) para simular a API REST
+- Jasmine e Karma para testes unitários
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Pré-requisitos
 
-```bash
-ng generate component component-name
-```
+- [Node.js](https://nodejs.org/) 18 ou superior
+- npm
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Como executar
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Clone o repositório e instale as dependências:
 
 ```bash
-ng test
+git clone <URL_DO_REPOSITORIO>
+cd controle-financeiro
+npm install
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Em um terminal, inicie a API simulada:
 
 ```bash
-ng e2e
+npm run server
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Em outro terminal, inicie a aplicação:
 
-## Additional Resources
+```bash
+npm start
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Acesse `http://localhost:4200`. A API local é executada em `http://localhost:3000` e usa os dados de `db.json`.
+
+### Usuário de demonstração
+
+```text
+E-mail: usuario@email.com
+Senha: abc123
+```
+
+As credenciais existem apenas para facilitar os testes locais. Não utilize dados reais.
+
+## Scripts
+
+| Comando | Descrição |
+| --- | --- |
+| `npm start` | Inicia o servidor de desenvolvimento Angular. |
+| `npm run server` | Inicia o `json-server` com os dados de `db.json`. |
+| `npm run build` | Gera a versão de produção em `dist/`. |
+| `npm test` | Executa os testes unitários com Karma. |
+| `npm run watch` | Compila em modo de desenvolvimento e observa alterações. |
+
+## Estrutura do projeto
+
+```text
+src/app/
+├── core/                    # Serviços, guardas e interceptor HTTP
+│   ├── guards/
+│   ├── interceptor/
+│   └── services/
+├── features/                # Telas e fluxos da aplicação
+│   ├── auth/
+│   ├── categorias/
+│   ├── configuracoes/
+│   ├── dashboard/
+│   ├── movimentacoes/
+│   └── perfil/
+├── layout/                  # Estrutura visual principal
+├── models/                  # Interfaces de domínio
+└── shared/                  # Componentes reutilizáveis e pipes
+	└── components/
+```
+
+## Arquitetura
+
+O projeto usa componentes standalone e rotas do Angular. As páginas autenticadas são renderizadas dentro do `MainLayoutComponent`, que reúne sidebar, header e conteúdo da rota.
+
+Os componentes acessam dados pelos serviços `AuthService`, `FinanceiroService` e `CategoriaService`. A URL da API é configurada nos arquivos de ambiente. Os modelos principais são `Usuario`, `Movimentacao` e `Categoria`.
+
+## API simulada
+
+O arquivo `db.json` contém três recursos REST:
+
+| Recurso | Finalidade |
+| --- | --- |
+| `/usuarios` | Dados usados no login simulado. |
+| `/movimentacoes` | Receitas e despesas. |
+| `/categorias` | Categorias disponíveis para as movimentações. |
+
+Exemplos de endpoints:
+
+```text
+GET    /movimentacoes
+POST   /movimentacoes
+PUT    /movimentacoes/:id
+DELETE /movimentacoes/:id
+
+GET    /categorias
+POST   /categorias
+PUT    /categorias/:id
+DELETE /categorias/:id
+```
+
+## Limitações atuais
+
+- O `json-server` é somente uma API de desenvolvimento e não aplica autorização por usuário.
+- Senhas e sessão são simuladas; não há hash, token, HTTPS obrigatório ou isolamento real de dados.
+- Cada usuário ainda não possui suas próprias movimentações e categorias.
+- Preferências, perfil e cadastro de usuário ainda não persistem dados.
+- A rota de perfil e o logout ainda precisam ser integrados ao fluxo de autenticação.
+
+Para uma versão de produção, o próximo passo é adicionar um backend com banco de dados, senhas protegidas por hash, autenticação baseada em sessão/cookie seguro ou token, e validação de propriedade dos recursos no servidor.
+
+## Contribuições
+
+Sugestões e melhorias são bem-vindas. Para contribuir:
+
+```bash
+git checkout -b feature/minha-melhoria
+git commit -m "feat: descreve a melhoria"
+git push origin feature/minha-melhoria
+```
+
+Abra um Pull Request descrevendo a alteração e como ela foi testada.
+
+## Licença
+
+Este projeto é destinado a fins educacionais. Adicione uma licença antes de reutilizá-lo ou distribuí-lo publicamente.

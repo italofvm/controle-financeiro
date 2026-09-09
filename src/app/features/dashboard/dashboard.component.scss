@@ -1,0 +1,39 @@
+.categoria-icone {
+	display: flex;
+	height: 2.25rem;
+	width: 2.25rem;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	border-radius: 9999px;
+}
+
+.categoria-icone--red {
+	background-color: #fee2e2;
+	color: #dc2626;
+}
+
+.categoria-icone--orange {
+	background-color: #ffedd5;
+	color: #ea580c;
+}
+
+.categoria-icone--blue {
+	background-color: #dbeafe;
+	color: #2563eb;
+}
+
+.categoria-icone--gray {
+	background-color: #f1f5f9;
+	color: #64748b;
+}
+
+.categoria-icone--green {
+	background-color: #dcfce7;
+	color: #16a34a;
+}
+
+.categoria-icone--violet {
+	background-color: #ede9fe;
+	color: #7c3aed;
+}

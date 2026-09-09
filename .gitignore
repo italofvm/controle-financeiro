@@ -9,7 +9,17 @@
 # Node
 /node_modules
 npm-debug.log
+npm-debug.log.*
 yarn-error.log
+yarn-debug.log
+yarn-error.log.*
+pnpm-debug.log
+lerna-debug.log
+
+# Environment files and local secrets
+.env
+.env.*
+!.env.example
 
 # IDEs and editors
 .idea/
@@ -40,3 +50,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+Desktop.ini
+*.swp
+*.swo

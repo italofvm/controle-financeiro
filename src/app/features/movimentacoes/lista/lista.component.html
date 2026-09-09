@@ -1,0 +1,226 @@
+<div
+  class="flex min-h-full flex-col items-center bg-gray-100 px-4 pb-6 sm:px-6 lg:px-8"
+>
+  <!--Botão Nova Movimentação-->
+  <div class="flex w-full max-w-7xl items-start justify-between gap-4 py-5">
+    <div class="min-w-0">
+      <h1 class="text-xl font-semibold text-gray-950 sm:text-2xl">
+        Movimentações
+      </h1>
+      <p class="mt-1 text-sm text-gray-500">
+        Gerencie suas receitas e despesas.
+      </p>
+    </div>
+    <a
+      routerLink="cadastro"
+      class="flex min-h-10 shrink-0 cursor-pointer items-center gap-2 rounded-lg bg-blue-600 px-3 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700 sm:px-4"
+    >
+      <svg lucideIcon="plus" class="h-4 w-4"></svg>
+      <span class="hidden sm:inline">Nova movimentação</span>
+      <span class="sm:hidden">Nova</span>
+    </a>
+  </div>
+
+  <!--Filtros de Pesquisa e Data-->
+  <div
+    class="w-full max-w-7xl rounded-lg border border-gray-200 bg-white p-3 shadow-sm sm:p-4"
+  >
+    <!--Pesquisa-->
+    <div class="relative">
+      <svg
+        lucideIcon="search"
+        class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+      ></svg>
+      <input
+        type="search"
+        [(ngModel)]="termoPesquisa"
+        aria-label="Pesquisar movimentações"
+        placeholder="Pesquisar movimentações..."
+        class="h-11 w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+
+    <!--Filtros-->
+    <div class="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <!--Filtro de Tipo Receita-->
+      <select
+        aria-label="Filtrar por tipo"
+        [(ngModel)]="tipoSelecionado"
+        class="h-11 min-w-0 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">Todos os Tipos</option>
+        <option value="receita">Receita</option>
+        <option value="despesa">Despesa</option>
+      </select>
+
+      <!--Filtro de Categoria-->
+
+      <select
+        id="categoria"
+        name="categoria"
+        aria-label="Filtrar por categoria"
+        [(ngModel)]="categoriaSelecionada"
+        class="h-11 min-w-0 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="" disable>Todas Categorias</option>
+        @for (categoria of categorias; track categoria.id) {
+          <option [value]="categoria.slug">{{ categoria.nome }}</option>
+        }
+      </select>
+
+      <!--Filtro de Data-->
+      <input
+        type="month"
+        aria-label="Filtrar por mês"
+        [(ngModel)]="selectedMonth"
+        class="col-span-2 h-11 min-w-0 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 lg:col-span-1"
+      />
+    </div>
+  </div>
+
+  <!--Cards de Movimentações-->
+  <div
+    class="mt-4 grid w-full max-w-7xl grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
+  >
+    @for (movimentacao of movimentacoesPaginadas; track movimentacao.id) {
+      <article
+        class="movement-card flex min-h-44 flex-col justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md"
+      >
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <h2 class="truncate font-semibold text-gray-900">
+              {{ movimentacao.descricao }}
+            </h2>
+            <p class="mt-1 text-xs capitalize text-gray-500">
+              {{ movimentacao.categoria }}
+            </p>
+          </div>
+          <span
+            class="shrink-0 rounded-full px-2.5 py-1 text-xs font-medium capitalize"
+            [ngClass]="
+              movimentacao.tipo === 'receita'
+                ? 'bg-green-50 text-green-700'
+                : 'bg-red-50 text-red-700'
+            "
+          >
+            {{ movimentacao.tipo }}
+          </span>
+        </div>
+
+        <div
+          class="mt-4 flex items-end justify-between gap-3 border-t border-gray-100 pt-3"
+        >
+          <div>
+            <p class="text-xs text-gray-500">
+              {{ movimentacao.data | date: "dd/MM/yyyy" }}
+            </p>
+            <p
+              class="mt-1 text-lg font-semibold"
+              [ngClass]="
+                movimentacao.tipo === 'receita'
+                  ? 'text-green-700'
+                  : 'text-gray-900'
+              "
+            >
+              {{ movimentacao.valor | currency: "BRL" }}
+            </p>
+          </div>
+
+          <div class="flex items-center gap-1">
+            <a
+              [routerLink]="['/movimentacoes/editar', movimentacao.id]"
+              aria-label="Editar movimentação"
+              class="flex h-10 w-10 items-center justify-center rounded-lg text-blue-600 hover:bg-blue-50"
+            >
+              <svg lucideIcon="pen" class="h-4 w-4"></svg>
+            </a>
+            <button
+              type="button"
+              aria-label="Excluir movimentação"
+              (click)="abrirModal(movimentacao)"
+              class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-red-600 hover:bg-red-50"
+            >
+              <svg lucideIcon="trash" class="h-4 w-4"></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+    } @empty {
+      <div
+        class="rounded-lg border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-500"
+      >
+        Nenhuma movimentação encontrada.
+      </div>
+    }
+  </div>
+
+  <!--Paginação-->
+  <div
+    class="mt-4 flex w-full max-w-7xl items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white px-3 py-3 shadow-sm sm:px-4"
+  >
+    <span class="shrink-0 text-xs text-gray-500">
+      Página {{ paginaAtual }} de {{ totalPaginas }}
+    </span>
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        (click)="paginaAnterior()"
+        [disabled]="paginaAtual === 1"
+        class="rounded-lg bg-gray-100 px-3 py-2 text-xs hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Anterior
+      </button>
+      <div class="hidden items-center gap-1 sm:flex">
+        @for (pagina of paginas; track pagina) {
+          <button
+            type="button"
+            (click)="irParaPagina(pagina)"
+            [class]="
+              pagina === paginaAtual
+                ? 'rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white'
+                : 'rounded-lg bg-gray-100 px-3 py-2 text-sm hover:bg-gray-200'
+            "
+          >
+            {{ pagina }}
+          </button>
+        }
+      </div>
+      <button
+        type="button"
+        (click)="proximaPagina()"
+        [disabled]="paginaAtual >= totalPaginas"
+        class="rounded-lg bg-gray-100 px-3 py-2 text-xs hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Próxima
+      </button>
+    </div>
+  </div>
+
+  <app-modal
+    [isOpen]="isModalOpen"
+    title="Excluir movimentação"
+    message="Tem certeza que deseja excluir esta movimentação?"
+    confirmText="Excluir"
+    cancelText="Cancelar"
+    (close)="fecharModal()"
+    (confirm)="confirmarExclusao()"
+  ></app-modal>
+
+  @if (mensagemSucesso) {
+    <div
+      class="fixed bottom-20 left-4 right-4 z-50 rounded-lg border border-green-300 bg-green-100 px-4 py-3 text-sm text-green-800 shadow-lg sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-sm"
+      role="alert"
+    >
+      {{ mensagemSucesso }}
+    </div>
+  }
+
+  @if (mensagemErro) {
+    <div
+      class="fixed bottom-20 left-4 right-4 z-50 rounded-lg border border-red-300 bg-red-100 px-4 py-3 text-sm text-red-800 shadow-lg sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-sm"
+      role="alert"
+    >
+      {{ mensagemErro }}
+    </div>
+  }
+</div>

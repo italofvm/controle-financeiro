@@ -1,0 +1,21 @@
+.categoria-icone {
+	align-items: center;
+	border-radius: 9999px;
+	display: flex;
+	height: 2.25rem;
+	justify-content: center;
+	width: 2.25rem;
+
+	&--red { background: #fff1f2; color: #f43f5e; }
+	&--orange { background: #fff7ed; color: #f97316; }
+	&--blue { background: #eff6ff; color: #2563eb; }
+	&--gray { background: #f3f4f6; color: #6b7280; }
+	&--green { background: #ecfdf5; color: #059669; }
+	&--violet { background: #f5f3ff; color: #7c3aed; }
+}
+
+@media (hover: none), (max-width: 1023px) {
+	.group > button {
+		opacity: 1;
+	}
+}

@@ -1,0 +1,129 @@
+<div class="flex flex-col items-center min-h-full pb-6 bg-gray-100">
+  <!--Titulo Preferencias-->
+  <div
+    class="flex items-center text-blue-500 text-2xl gap-2 w-5/6 mt-5 p-4 border-b border-gray-300"
+  >
+    <svg lucideIcon="settings-2"></svg>
+    <h2 class="font-semibold">Preferências</h2>
+  </div>
+  <div
+    class="flex flex-col items-center gap-5 w-5/6 mt-5 p-4 bg-white border border-gray-200 rounded-lg shadow-md"
+  >
+    <!--Moeda Principal-->
+    <div class="flex justify-between items-center w-full gap-2">
+      <div>
+        <h2 class="font-semibold text-gray-700 text-md">Moeda Principal</h2>
+        <p class="text-gray-500 text-sm">
+          Defina a moeda padrão para exibição dos valores.
+        </p>
+      </div>
+      <div #currencyMenu class="relative w-1/5">
+        <button
+          type="button"
+          (click)="alternarMoedas()"
+          [attr.aria-expanded]="isCurrencyOpen"
+          aria-haspopup="listbox"
+          class="flex h-12 w-full items-center justify-between rounded-lg border border-gray-300 bg-white p-3 text-left text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+        >
+          <span>
+            {{ moedaSelecionada.nome }} ({{ moedaSelecionada.simbolo }})
+          </span>
+          <svg lucideIcon="arrow-down" class="text-gray-400"></svg>
+        </button>
+
+        @if (isCurrencyOpen) {
+          <div
+            class="absolute right-0 z-10 mt-2 w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
+            role="listbox"
+          >
+            @for (moeda of moedas; track moeda.codigo) {
+              <button
+                type="button"
+                (click)="selecionarMoeda(moeda)"
+                class="block w-full px-4 py-3 text-left text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700 cursor-pointer"
+                [class.bg-blue-50]="moeda.codigo === moedaSelecionada.codigo"
+                role="option"
+                [attr.aria-selected]="moeda.codigo === moedaSelecionada.codigo"
+              >
+                {{ moeda.nome }} ({{ moeda.simbolo }})
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <hr class="text-gray-300 w-full" />
+
+    <!--Dia do Ciclo Mensal-->
+    <div class="flex justify-between items-center w-full gap-2">
+      <div>
+        <h2 class="font-semibold text-gray-700 text-md">
+          Inicio do Ciclo Mensal
+        </h2>
+        <p class="text-gray-500 text-sm">
+          Dia em que seus relatórios mensais recomeçam.
+        </p>
+      </div>
+      <div #dayMenu class="relative w-1/5">
+        <button
+          type="button"
+          (click)="alternarDias()"
+          [attr.aria-expanded]="isDayOpen"
+          aria-haspopup="listbox"
+          class="flex h-12 w-full items-center justify-between rounded-lg border border-gray-300 bg-white p-3 text-left text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+        >
+          <span> Dia {{ diaSelecionado }} </span>
+          <svg lucideIcon="arrow-down" class="text-gray-400"></svg>
+        </button>
+
+        @if (isDayOpen) {
+          <div
+            class="absolute right-0 z-10 mt-2 max-h-60 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"
+            role="listbox"
+          >
+            @for (dia of diasMensais; track dia) {
+              <button
+                type="button"
+                (click)="selecionarDia(dia)"
+                class="block w-full px-4 py-3 text-left text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700 cursor-pointer"
+                [class.bg-blue-50]="dia === diaSelecionado"
+                role="option"
+                [attr.aria-selected]="dia === diaSelecionado"
+              >
+                Dia {{ dia }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!--Titulo Dados-->
+  <div
+    class="flex items-center text-red-500 text-2xl gap-2 w-5/6 mt-5 p-4 border-b border-gray-300"
+  >
+    <svg lucideIcon="triangle-alert"></svg>
+    <h2 class="font-semibold">Dados</h2>
+  </div>
+
+  <div
+    class="flex flex-col items-center gap-5 w-5/6 mt-5 p-4 bg-red-100/50 border border-red-300 rounded-lg shadow-md"
+  >
+    <div class="flex justify-between items-center w-full gap-2">
+      <div class="flex flex-col gap-1">
+        <h2 class="font-semibold text-md text-red-500">Zona de Perigo</h2>
+        <p class="text-gray-500 text-sm">
+          Remover permanentemente todas as transações, categorias e histórico.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="flex h-12 items-center justify-center rounded-lg border border-red-500 bg-red-500 px-4 py-2 text-white gap-2 transition hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
+      >
+        <svg lucideIcon="trash"></svg> Limpar todos os dados
+      </button>
+    </div>
+  </div>
+</div>

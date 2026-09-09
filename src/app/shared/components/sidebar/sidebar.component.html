@@ -1,0 +1,101 @@
+<aside
+  [ngClass]="{ 'w-20': isCollapsed, 'w-20 sidebar-expanded': !isCollapsed }"
+  class="flex h-screen flex-col justify-between bg-gray-100 transition-all duration-300 border-r border-gray-300"
+>
+  <div>
+    <!--Logo SideBar-->
+    <div
+      class="flex m-3 gap-2"
+      [ngClass]="
+        isCollapsed
+          ? 'flex-col items-center'
+          : 'flex-row items-center justify-between'
+      "
+    >
+      <div
+        class="flex items-center gap-2"
+        [ngClass]="{ 'flex-1': !isCollapsed }"
+      >
+        <span
+          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500 text-2xl font-bold text-white"
+          >M</span
+        >
+
+        @if (!isCollapsed) {
+          <h2 class="font-semibold text-blue-500">Meu Controle Financeiro</h2>
+        }
+      </div>
+
+      <button
+        [ngClass]="{ 'rotate-180': isCollapsed }"
+        (click)="toggleCollapse()"
+        class="rounded-lg p-2 hover:bg-gray-200 cursor-pointer"
+      >
+        <svg lucideIcon="panel-left"></svg>
+      </button>
+    </div>
+
+    <!--Menu SideBar-->
+    <nav class="flex flex-col gap-2 p-4">
+      <a
+        routerLink="dashboard"
+        routerLinkActive="bg-blue-500 text-white"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex items-center gap-3 rounded-lg p-3 text-gray-700 transition-colors duration-300 hover:bg-blue-600 hover:text-white"
+        ><svg lucideIcon="layout-dashboard"></svg>
+
+        @if (!isCollapsed) {
+          <span>Dashboard</span>
+        }
+      </a>
+      <a
+        routerLink="movimentacoes"
+        routerLinkActive="bg-blue-500 text-white"
+        class="flex items-center gap-3 rounded-lg p-3 text-gray-700 transition-colors duration-300 hover:bg-blue-600 hover:text-white"
+        ><svg lucideIcon="arrow-left-right"></svg>
+        @if (!isCollapsed) {
+          <span>Movimentações</span>
+        }
+      </a>
+      <a
+        routerLink="categorias"
+        routerLinkActive="bg-blue-500 text-white"
+        class="flex items-center gap-3 rounded-lg p-3 text-gray-700 transition-colors duration-300 hover:bg-blue-600 hover:text-white"
+        ><svg lucideIcon="chart-bar-stacked"></svg>
+
+        @if (!isCollapsed) {
+          <span>Categorias</span>
+        }
+      </a>
+      <a
+        routerLink="configuracoes"
+        routerLinkActive="bg-blue-500 text-white"
+        class="flex items-center gap-3 rounded-lg p-3 text-gray-700 transition-colors duration-300 hover:bg-blue-600 hover:text-white"
+        ><svg lucideIcon="settings"></svg>
+
+        @if (!isCollapsed) {
+          <span>Configurações</span>
+        }
+      </a>
+    </nav>
+  </div>
+
+  <!--Botão Nova Movimentação-->
+  <div class="p-4 flex justify-center">
+    @if (!isCollapsed) {
+      <button
+        [routerLink]="'/movimentacoes/cadastro'"
+        class="sidebar-new-movement w-full mb-3 p-3 flex items-center gap-2 text-white bg-blue-500 rounded-2xl hover:bg-blue-600 cursor-pointer"
+      >
+        <svg lucideIcon="plus"></svg> Nova movimentação
+      </button>
+    }
+    @if (isCollapsed) {
+      <button
+        class="p-3 text-white bg-blue-500 rounded-full hover:bg-blue-600 cursor-pointer"
+      >
+        <svg lucideIcon="plus"></svg>
+      </button>
+    }
+  </div>
+</aside>

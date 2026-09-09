@@ -1,0 +1,128 @@
+<section
+  class="flex min-h-full items-start justify-center bg-gray-100 px-4 py-6 sm:items-center sm:px-6 lg:py-10"
+>
+  <div
+    class="w-full max-w-lg rounded-lg border border-gray-200 bg-white p-5 shadow-md sm:p-6 lg:max-w-2xl lg:p-8"
+  >
+    <header class="mb-5 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-semibold text-gray-900">
+          {{ isEditando ? "Editar categoria" : "Nova categoria" }}
+        </h1>
+        <p class="mt-1 text-sm text-gray-500">
+          Defina como a categoria será identificada.
+        </p>
+      </div>
+      <a
+        routerLink="/categorias"
+        aria-label="Voltar para categorias"
+        title="Fechar"
+        class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+      >
+        <svg lucideIcon="x" class="h-5 w-5"></svg>
+      </a>
+    </header>
+
+    <form
+      [formGroup]="camposFormulario"
+      (ngSubmit)="salvarCategoria()"
+      class="flex flex-col gap-5"
+    >
+      <div>
+        <label for="nome" class="mb-1.5 block text-sm font-medium text-gray-700"
+          >Nome</label
+        >
+        <input
+          id="nome"
+          type="text"
+          formControlName="nome"
+          maxlength="40"
+          placeholder="Ex: Educação"
+          class="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-800 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        />
+        @if (isCampoInvalido("nome")) {
+          <p class="mt-1 text-xs text-red-500">
+            Digite um nome com pelo menos 2 caracteres.
+          </p>
+        }
+      </div>
+
+      <fieldset>
+        <legend class="mb-2 text-sm font-medium text-gray-700">Ícone</legend>
+        <div class="grid grid-cols-4 gap-2 sm:grid-cols-8 lg:gap-3">
+          @for (icone of icones; track icone.valor) {
+            <label
+              class="flex aspect-square cursor-pointer items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-blue-300 hover:bg-blue-50 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 has-[:checked]:text-blue-600"
+              [title]="icone.rotulo"
+            >
+              <input
+                type="radio"
+                formControlName="icone"
+                [value]="icone.valor"
+                class="sr-only"
+              />
+              <svg [lucideIcon]="icone.valor" class="h-5 w-5"></svg>
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="mb-2 text-sm font-medium text-gray-700">Cor</legend>
+        <div class="flex flex-wrap gap-3">
+          @for (cor of cores; track cor.valor) {
+            <label class="cursor-pointer" [title]="cor.rotulo">
+              <input
+                type="radio"
+                formControlName="cor"
+                [value]="cor.valor"
+                class="peer sr-only"
+              />
+              <span
+                class="cor-amostra block h-8 w-8 rounded-full border-2 border-white shadow-sm ring-1 ring-gray-200 transition peer-checked:scale-110 peer-checked:ring-2 peer-checked:ring-blue-500"
+                [ngClass]="'cor-amostra--' + cor.valor"
+              ></span>
+              <span class="sr-only">{{ cor.rotulo }}</span>
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      <div
+        class="mt-1 flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end"
+      >
+        <a
+          routerLink="/categorias"
+          class="rounded-lg border border-gray-300 px-5 py-2.5 text-center text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+        >
+          Cancelar
+        </a>
+        <button
+          type="submit"
+          class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+        >
+          {{ isEditando ? "Atualizar" : "Salvar" }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <app-modal
+    [isOpen]="isModalOpen"
+    title="Categoria cadastrada!"
+    message="A categoria foi cadastrada com sucesso. O que deseja fazer?"
+    confirmText="Voltar"
+    cancelText="Adicionar outra"
+    (close)="adicionarOutra()"
+    (confirm)="voltarParaCategorias()"
+  ></app-modal>
+
+  @if (mensagemErro) {
+    <div
+      class="fixed bottom-6 right-6 z-40 rounded-lg border border-red-300 bg-red-100 px-5 py-3 text-sm text-red-800 shadow-lg"
+      role="alert"
+    >
+      {{ mensagemErro }}
+    </div>
+  }
+</section>
