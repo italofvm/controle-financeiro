@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Usuario } from '../../models/usuario';
 
@@ -10,18 +10,28 @@ import { Usuario } from '../../models/usuario';
 export class AuthService {
 
   private readonly apiUrl = `${environment.apiUrl}/usuarios`;
+  
+  private usuarioSubject =
+    new BehaviorSubject<Usuario | null>(null);
 
-  constructor(private http: HttpClient) { }
+  usuario$ =
+    this.usuarioSubject.asObservable();
+
+  constructor(private http: HttpClient) {
+    const usuario = this.obterUsuario();
+    this.usuarioSubject.next(usuario);
+  }
 
   login(email: string, senha: string): Observable<Usuario | null> {
-    return this.http.get<Usuario[]>(`${this.apiUrl}?email=${email}&senha=${senha}`)
+    return this.http.get<Usuario[]>(`${this.apiUrl}?email=${encodeURIComponent(email)}`)
       .pipe(
-        map(usuarios => usuarios.length > 0 ? usuarios[0] : null)
+        map(usuarios => usuarios.find(u => u.senha === senha) ?? null)
       );
   }
 
   salvarSessao(usuario: Usuario): void {
     localStorage.setItem('usuario', JSON.stringify(usuario));
+    this.usuarioSubject.next(usuario);
   }
 
   obterUsuario(): Usuario | null {
@@ -40,6 +50,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('usuario');
+    this.usuarioSubject.next(null);
   }
 
 }

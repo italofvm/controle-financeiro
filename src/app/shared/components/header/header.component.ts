@@ -36,7 +36,11 @@ export class HeaderComponent implements OnInit {
       this.title = route.snapshot.data['title'];
     })
 
-    this.usuarioNome = this.authService.obterUsuario()?.nome;
+    this.authService.usuario$.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(usuario => {
+      this.usuarioNome = usuario?.nome;
+    });
   }
 
 
@@ -58,8 +62,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout() {
-    localStorage.removeItem('usuarioLogado');
-
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 }

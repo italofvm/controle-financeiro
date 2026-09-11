@@ -2,9 +2,9 @@
   "usuarios": [
     {
       "id": "1",
-      "nome": "Usuario Teste",
+      "nome": "Zé da manga",
       "email": "usuario@email.com",
-      "senha": "abc123"
+      "senha": "abcd1234"
     }
   ],
   "movimentacoes": [

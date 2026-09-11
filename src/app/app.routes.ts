@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { CadastroComponent } from './features/auth/cadastro/cadastro.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { ListaComponent as ListaCategoriasComponent } from './features/categorias/lista/lista.component';
 import { ConfiguracoesComponent } from './features/configuracoes/configuracoes.component';
@@ -13,6 +14,10 @@ export const routes: Routes = [
     component: LoginComponent,
   },
   {
+    path: 'cadastro',
+    component: CadastroComponent
+  },
+  {
     path: '',
     component: MainLayoutComponent,
     canActivate: [authGuard],
@@ -20,7 +25,6 @@ export const routes: Routes = [
       path: '',
       redirectTo: 'dashboard',
       pathMatch: 'full',
-      data: { title: 'Dashboard' }
     },
     {
       path: 'dashboard',
