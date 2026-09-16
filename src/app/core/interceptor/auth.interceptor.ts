@@ -1,11 +1,15 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { catchError, throwError } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  return next(req).pipe(
-    catchError((erro: HttpErrorResponse) => {
-      console.error(`[HTTP ${erro.status || 'erro de rede'}] ${req.method} ${req.url}`, erro);
-      return throwError(() => erro);
-    })
-  );
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return next(req)
+  }
+
+  const authReq = req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return next(authReq)
 };

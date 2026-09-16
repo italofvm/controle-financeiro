@@ -5,6 +5,7 @@ export interface Categoria {
   id: string;
   nome: string;
   slug: CategoriaSlug;
-  icone: string;
+  icon: string;
+  icone?: string;
   cor: CategoriaCor;
 }

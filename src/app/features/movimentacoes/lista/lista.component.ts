@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { LucideDynamicIcon } from "@lucide/angular";
@@ -33,7 +32,6 @@ export class ListaComponent implements OnInit {
   movimentacaoSelecionada: Movimentacao | null = null;
   mensagemSucesso: string = '';
   mensagemErro: string = '';
-  private readonly destroyRef = inject(DestroyRef);
 
   constructor(private financeiroService: FinanceiroService,
     private notificacaoService: NotificacaoService,
@@ -42,16 +40,6 @@ export class ListaComponent implements OnInit {
 
   ngOnInit() {
     this.carregarCategorias();
-    this.notificacaoService.mensagem$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(mensagem => {
-        this.mensagemSucesso = mensagem;
-      });
-    this.notificacaoService.erro$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(mensagem => {
-        this.mensagemErro = mensagem;
-      });
     this.financeiroService.getMovimentacoes().subscribe({
       next: dados => {
         this.movimentacoes = [...dados].reverse();
@@ -68,7 +56,9 @@ export class ListaComponent implements OnInit {
 
       const correspondeTipo = !this.tipoSelecionado || movimentacao.tipo === this.tipoSelecionado;
 
-      const correspondeCategoria = !this.categoriaSelecionada || movimentacao.categoria === this.categoriaSelecionada;
+      const correspondeCategoria =
+        !this.categoriaSelecionada ||
+        this.slugCategoria(movimentacao.categoria) === this.categoriaSelecionada;
 
       const correspondeMes = !this.selectedMonth || movimentacao.data?.startsWith(this.selectedMonth);
 
@@ -147,5 +137,39 @@ export class ListaComponent implements OnInit {
       },
       error: () => this.notificacaoService.mostrarErro('Não foi possível carregar as categorias.')
     })
+  }
+
+  nomeCategoria(referencia: unknown): string {
+    const dados = this.dadosCategoria(referencia);
+    const categoria = this.categorias.find(item =>
+      item.slug === dados.slug ||
+      (!!dados.id && item.id === dados.id) ||
+      (!!dados.nome && item.nome === dados.nome)
+    );
+
+    return categoria?.nome ?? dados.nome ?? dados.slug ?? 'Outros';
+  }
+
+  private slugCategoria(referencia: unknown): string {
+    const dados = this.dadosCategoria(referencia);
+    const categoria = this.categorias.find(item =>
+      item.slug === dados.slug ||
+      (!!dados.id && item.id === dados.id) ||
+      (!!dados.nome && item.nome === dados.nome)
+    );
+
+    return categoria?.slug ?? dados.slug ?? dados.id ?? dados.nome ?? 'outros';
+  }
+
+  private dadosCategoria(referencia: unknown): Partial<Categoria> {
+    if (typeof referencia === 'string') {
+      return { slug: referencia };
+    }
+
+    if (referencia && typeof referencia === 'object') {
+      return referencia as Partial<Categoria>;
+    }
+
+    return {};
   }
 }

@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Categoria } from '../../models/categoria';
+import { AtualizarCategoria } from '../../models/dtos/atualizar-categoria.dto';
+import { CriarCategoria } from '../../models/dtos/criar-categoria.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -20,15 +22,15 @@ export class CategoriaService {
     return this.http.get<Categoria>(`${this.apiUrl}/${id}`);
   }
 
-  salvar(categoria: Omit<Categoria, 'id'>): Observable<Categoria> {
+  salvar(categoria: CriarCategoria): Observable<Categoria> {
     return this.http.post<Categoria>(this.apiUrl, categoria);
   }
 
-  atualizar(categoria: Categoria): Observable<Categoria> {
-    return this.http.put<Categoria>(`${this.apiUrl}/${categoria.id}`, categoria);
+  atualizar(id: string, dados: AtualizarCategoria): Observable<Categoria> {
+    return this.http.patch<Categoria>(`${this.apiUrl}/${id}`, dados);
   }
 
-  deletar(categoria: Categoria): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${categoria.id}`);
+  deletar(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

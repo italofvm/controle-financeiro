@@ -123,17 +123,17 @@
           <select
             id="categoria"
             name="categoria"
-            formControlName="categoria"
+            formControlName="categoriaId"
             class="min-h-11 w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
           >
             <option value="" disabled>Selecione...</option>
             @for (categoria of categorias; track categoria.id) {
-              <option [value]="categoria.slug">{{ categoria.nome }}</option>
+              <option [value]="categoria.id">{{ categoria.nome }}</option>
             }
           </select>
 
           <p
-            *ngIf="isCampoInvalido('categoria')"
+            *ngIf="isCampoInvalido('categoriaId')"
             class="mt-1 text-xs text-red-500"
           >
             Escolha uma categoria.
@@ -184,22 +184,4 @@
       ></app-modal>
     </form>
   </div>
-
-  @if (mensagemSucesso) {
-    <div
-      class="fixed bottom-20 left-4 right-4 z-50 rounded-lg border border-green-300 bg-green-100 px-4 py-3 text-sm text-green-800 shadow-lg sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-sm"
-      role="alert"
-    >
-      {{ mensagemSucesso }}
-    </div>
-  }
-
-  @if (mensagemErro) {
-    <div
-      class="fixed bottom-20 left-4 right-4 z-50 rounded-lg border border-red-300 bg-red-100 px-4 py-3 text-sm text-red-800 shadow-lg sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-sm"
-      role="alert"
-    >
-      {{ mensagemErro }}
-    </div>
-  }
 </div>

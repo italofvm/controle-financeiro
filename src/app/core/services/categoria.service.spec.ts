@@ -13,7 +13,7 @@ describe('CategoriaService', () => {
     id: '1',
     nome: 'Alimentação',
     slug: 'alimentacao',
-    icone: 'utensils',
+    icon: 'utensils',
     cor: 'red'
   };
 
@@ -52,7 +52,7 @@ describe('CategoriaService', () => {
     const novaCategoria = {
       nome: categoria.nome,
       slug: categoria.slug,
-      icone: categoria.icone,
+      icon: categoria.icon,
       cor: categoria.cor
     };
 

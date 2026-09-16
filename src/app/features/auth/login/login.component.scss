@@ -1,0 +1,43 @@
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(24px, -28px) scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .auth-card {
+    animation: fade-in-up 0.6s ease-out both;
+  }
+
+  .auth-field {
+    animation: fade-in-up 0.5s ease-out both;
+  }
+
+  .auth-field:nth-of-type(2) {
+    animation-delay: 0.08s;
+  }
+
+  .auth-blob {
+    animation: float-blob 10s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .auth-blob--delay {
+    animation-delay: -5s;
+  }
+}

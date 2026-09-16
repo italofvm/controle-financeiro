@@ -1,6 +1,6 @@
 # Meu Controle Financeiro
 
-Aplicação web responsiva para organizar receitas, despesas e categorias. Desenvolvida como projeto de aprendizado com Angular, consumindo uma API simulada localmente.
+Aplicação web responsiva para organizar receitas, despesas e categorias. Desenvolvida como projeto de aprendizado com Angular, consumindo uma API local.
 
 > Este projeto utiliza autenticação e persistência simuladas. Não está preparado para uso em produção.
 
@@ -23,7 +23,7 @@ Aplicação web responsiva para organizar receitas, despesas e categorias. Desen
 - [Tailwind CSS 4](https://tailwindcss.com/)
 - [Lucide Angular](https://lucide.dev/guide/packages/lucide-angular)
 - [RxJS](https://rxjs.dev/)
-- [json-server](https://github.com/typicode/json-server) para simular a API REST
+- API REST local configurada nos arquivos de ambiente
 - Jasmine e Karma para testes unitários
 
 ## Pré-requisitos
@@ -41,19 +41,13 @@ cd controle-financeiro
 npm install
 ```
 
-Em um terminal, inicie a API simulada:
-
-```bash
-npm run server
-```
-
-Em outro terminal, inicie a aplicação:
+Inicie a aplicação:
 
 ```bash
 npm start
 ```
 
-Acesse `http://localhost:4200`. A API local é executada em `http://localhost:3000` e usa os dados de `db.json`.
+Acesse `http://localhost:4200`. A URL da API é configurada em `src/environments/`.
 
 ### Usuário de demonstração
 
@@ -69,7 +63,6 @@ As credenciais existem apenas para facilitar os testes locais. Não utilize dado
 | Comando | Descrição |
 | --- | --- |
 | `npm start` | Inicia o servidor de desenvolvimento Angular. |
-| `npm run server` | Inicia o `json-server` com os dados de `db.json`. |
 | `npm run build` | Gera a versão de produção em `dist/`. |
 | `npm test` | Executa os testes unitários com Karma. |
 | `npm run watch` | Compila em modo de desenvolvimento e observa alterações. |
@@ -101,13 +94,13 @@ O projeto usa componentes standalone e rotas do Angular. As páginas autenticada
 
 Os componentes acessam dados pelos serviços `AuthService`, `FinanceiroService` e `CategoriaService`. A URL da API é configurada nos arquivos de ambiente. Os modelos principais são `Usuario`, `Movimentacao` e `Categoria`.
 
-## API simulada
+## API
 
-O arquivo `db.json` contém três recursos REST:
+A aplicação consome os seguintes recursos REST:
 
 | Recurso | Finalidade |
 | --- | --- |
-| `/usuarios` | Dados usados no login simulado. |
+| `/usuarios` | Dados de usuários e autenticação. |
 | `/movimentacoes` | Receitas e despesas. |
 | `/categorias` | Categorias disponíveis para as movimentações. |
 
@@ -127,8 +120,7 @@ DELETE /categorias/:id
 
 ## Limitações atuais
 
-- O `json-server` é somente uma API de desenvolvimento e não aplica autorização por usuário.
-- Senhas e sessão são simuladas; não há hash, token, HTTPS obrigatório ou isolamento real de dados.
+- Senhas e sessão ainda dependem da implementação da API; não há garantia de hash, token, HTTPS obrigatório ou isolamento real de dados no frontend.
 - Cada usuário ainda não possui suas próprias movimentações e categorias.
 - Preferências, perfil e cadastro de usuário ainda não persistem dados.
 - A rota de perfil e o logout ainda precisam ser integrados ao fluxo de autenticação.

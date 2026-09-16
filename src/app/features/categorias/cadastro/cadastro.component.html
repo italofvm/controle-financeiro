@@ -50,18 +50,18 @@
       <fieldset>
         <legend class="mb-2 text-sm font-medium text-gray-700">Ícone</legend>
         <div class="grid grid-cols-4 gap-2 sm:grid-cols-8 lg:gap-3">
-          @for (icone of icones; track icone.valor) {
+          @for (icon of icones; track icon.valor) {
             <label
               class="flex aspect-square cursor-pointer items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-blue-300 hover:bg-blue-50 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 has-[:checked]:text-blue-600"
-              [title]="icone.rotulo"
+              [title]="icon.rotulo"
             >
               <input
                 type="radio"
-                formControlName="icone"
-                [value]="icone.valor"
+                formControlName="icon"
+                [value]="icon.valor"
                 class="sr-only"
               />
-              <svg [lucideIcon]="icone.valor" class="h-5 w-5"></svg>
+              <svg [lucideIcon]="icon.valor" class="h-5 w-5"></svg>
             </label>
           }
         </div>
@@ -116,13 +116,4 @@
     (close)="adicionarOutra()"
     (confirm)="voltarParaCategorias()"
   ></app-modal>
-
-  @if (mensagemErro) {
-    <div
-      class="fixed bottom-6 right-6 z-40 rounded-lg border border-red-300 bg-red-100 px-5 py-3 text-sm text-red-800 shadow-lg"
-      role="alert"
-    >
-      {{ mensagemErro }}
-    </div>
-  }
 </section>

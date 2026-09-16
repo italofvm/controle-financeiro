@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LucideDynamicIcon } from '@lucide/angular';
@@ -11,7 +10,7 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
 
 type CategoriaFormControls = {
   nome: FormControl<string>;
-  icone: FormControl<string>;
+  icon: FormControl<string>;
   cor: FormControl<CategoriaCor>;
 };
 
@@ -47,7 +46,6 @@ export class CadastroComponent implements OnInit {
   idCategoria?: string;
   mensagemSucesso = '';
   mensagemErro = '';
-  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     private categoriaService: CategoriaService,
@@ -58,7 +56,7 @@ export class CadastroComponent implements OnInit {
   ) {
     this.camposFormulario = this.formBuilder.group<CategoriaFormControls>({
       nome: this.formBuilder.control('', [Validators.required, Validators.minLength(2)]),
-      icone: this.formBuilder.control('ellipsis', Validators.required),
+      icon: this.formBuilder.control('ellipsis', Validators.required),
       cor: this.formBuilder.control<CategoriaCor>('blue', Validators.required)
     });
   }
@@ -70,13 +68,6 @@ export class CadastroComponent implements OnInit {
       this.idCategoria = id;
       this.carregarCategoria(id);
     }
-
-    this.notificacaoService.mensagem$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(mensagem => this.mensagemSucesso = mensagem);
-    this.notificacaoService.erro$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(mensagem => this.mensagemErro = mensagem);
   }
 
   carregarCategoria(id: string): void {
@@ -120,7 +111,12 @@ export class CadastroComponent implements OnInit {
       id: this.idCategoria,
       ...this.criarCategoriaDoFormulario()
     };
-    this.categoriaService.atualizar(categoria).subscribe({
+    this.categoriaService.atualizar(categoria.id, {
+      nome: categoria.nome,
+      icon: categoria.icon,
+      cor: categoria.cor,
+      slug: categoria.slug
+    }).subscribe({
       next: () => {
         this.notificacaoService.mostrarMensagem('Categoria atualizada com sucesso!');
         this.router.navigate(['/categorias']);
@@ -136,7 +132,7 @@ export class CadastroComponent implements OnInit {
 
   adicionarOutra(): void {
     this.isModalOpen = false;
-    this.camposFormulario.reset({ nome: '', icone: 'ellipsis', cor: 'blue' });
+    this.camposFormulario.reset({ nome: '', icon: 'ellipsis', cor: 'blue' });
   }
 
   voltarParaCategorias(): void {

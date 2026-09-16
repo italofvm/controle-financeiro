@@ -57,7 +57,7 @@ describe('ExportacaoService', () => {
     const categoriasRequest = httpController.expectOne(`${environment.apiUrl}/categorias`);
     expect(categoriasRequest.request.method).toBe('GET');
     categoriasRequest.flush([
-      { id: '1', nome: 'Salário', slug: 'salario', icone: 'banknote', cor: 'green' }
+      { id: '1', nome: 'Salário', slug: 'salario', icon: 'banknote', cor: 'green' }
     ]);
 
     const arquivo = createObjectUrlSpy.calls.mostRecent().args[0] as Blob;

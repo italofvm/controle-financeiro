@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CategoriaService } from '../../../core/services/categoria.service';
 import { FinanceiroService } from '../../../core/services/financeiro.service';
 import { NotificacaoService } from '../../../core/services/notificacao.service';
-import { Categoria, CategoriaSlug } from '../../../models/categoria';
-import { Movimentacao } from '../../../models/movimentacao';
+import { Categoria } from '../../../models/categoria';
+import { AtualizarMovimentacao } from '../../../models/dtos/atualizar-movimentacao.dto';
+import { CriarMovimentacao } from '../../../models/dtos/criar-movimentacao.dto';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 
 type MovimentacaoFormControls = {
   descricao: FormControl<string>;
-  categoria: FormControl<CategoriaSlug>;
+  categoriaId: FormControl<string>;
   data: FormControl<string>;
   tipo: FormControl<'receita' | 'despesa'>;
   valor: FormControl<number>;
@@ -30,10 +30,7 @@ export class CadastroComponent implements OnInit {
   isEditando: boolean = false;
   idMovimentacao?: string;
   isModalOpen: boolean = false;
-  mensagemSucesso: string = '';
-  mensagemErro: string = '';
   categorias: Categoria[] = [];
-  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     private financeiroService: FinanceiroService,
@@ -45,7 +42,7 @@ export class CadastroComponent implements OnInit {
   ) {
     this.camposFormulario = this.formBuilder.group<MovimentacaoFormControls>({
       descricao: this.formBuilder.control('', Validators.required),
-      categoria: this.formBuilder.control<CategoriaSlug>('', Validators.required),
+      categoriaId: this.formBuilder.control('', Validators.required),
       data: this.formBuilder.control('', Validators.required),
       tipo: this.formBuilder.control<'receita' | 'despesa'>('receita', Validators.required),
       valor: this.formBuilder.control(0, [Validators.required, Validators.min(0.01)])
@@ -62,17 +59,6 @@ export class CadastroComponent implements OnInit {
 
       this.carregarMovimentacao(id);
     }
-
-    this.notificacaoService.mensagem$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(mensagem => {
-        this.mensagemSucesso = mensagem;
-      });
-    this.notificacaoService.erro$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(mensagem => {
-        this.mensagemErro = mensagem;
-      });
   }
 
   carregarCategorias(): void {
@@ -87,13 +73,25 @@ export class CadastroComponent implements OnInit {
   carregarMovimentacao(id: string) {
     this.financeiroService.getMovimentacao(id).subscribe({
       next: (movimentacao) => {
-        this.camposFormulario.patchValue(movimentacao);
+        this.camposFormulario.patchValue({
+          descricao: movimentacao.descricao,
+          categoriaId: movimentacao.categoriaId ?? '',
+          data: movimentacao.data,
+          tipo: movimentacao.tipo,
+          valor: movimentacao.valor
+        });
       },
       error: () => this.notificacaoService.mostrarErro('Não foi possível carregar a movimentação.')
     })
   }
 
   salvarMovimentacao() {
+
+    console.log(this.camposFormulario.getRawValue());
+    console.log(this.camposFormulario.valid);
+    console.log(this.camposFormulario.errors);
+    console.log(this.camposFormulario.controls);
+
     this.camposFormulario.markAllAsTouched();
 
     if (this.camposFormulario.invalid) {
@@ -107,8 +105,9 @@ export class CadastroComponent implements OnInit {
     }
   }
 
-  cadastrarMovimentacao() {
-    this.financeiroService.salvar(this.camposFormulario.getRawValue()).subscribe({
+  cadastrarMovimentacao(): void {
+    const movimentacao = this.criarMovimentacaoDoFormulario();
+    this.financeiroService.salvar(movimentacao).subscribe({
       next: () => {
         this.isModalOpen = true;
         this.notificacaoService.mostrarMensagem('Movimentação cadastrada com sucesso!');
@@ -117,17 +116,20 @@ export class CadastroComponent implements OnInit {
     });
   }
 
+  private criarMovimentacaoDoFormulario(): CriarMovimentacao {
+    return this.camposFormulario.getRawValue();
+  }
+
   atualizarMovimentacao() {
     if (!this.idMovimentacao) {
       return;
     }
 
-    const movimentacao: Movimentacao = {
-      id: this.idMovimentacao,
-      ...this.camposFormulario.getRawValue()
-    };
+    const dados: AtualizarMovimentacao =
+      this.camposFormulario.getRawValue();
 
-    this.financeiroService.atualizar(movimentacao).subscribe({
+
+    this.financeiroService.atualizar(this.idMovimentacao, dados).subscribe({
       next: () => {
         this.notificacaoService.mostrarMensagem('Movimentação atualizada com sucesso!');
         this.router.navigate(['/movimentacoes']);
@@ -145,7 +147,7 @@ export class CadastroComponent implements OnInit {
     this.isModalOpen = false;
     this.camposFormulario.reset({
       descricao: '',
-      categoria: '',
+      categoriaId: '',
       data: '',
       tipo: 'receita',
       valor: 0

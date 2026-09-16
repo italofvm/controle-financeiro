@@ -21,7 +21,7 @@ export class ConfiguracaoService {
       switchMap(({ movimentacoes, categorias }) => {
         const exclusoes = [
           ...movimentacoes.map(movimentacao => this.financeiroService.deletar(movimentacao)),
-          ...categorias.map(categoria => this.categoriaService.deletar(categoria))
+          ...categorias.map(categoria => this.categoriaService.deletar(categoria.id))
         ];
 
         if (!exclusoes.length) {

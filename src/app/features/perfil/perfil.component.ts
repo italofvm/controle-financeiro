@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { LucideDynamicIcon } from '@lucide/angular';
 import { AuthService } from '../../core/services/auth.service';
@@ -24,8 +23,6 @@ export class PerfilComponent implements OnInit {
   confirmarSenha: string = '';
   salvandoDados: boolean = false;
   alterandoSenha: boolean = false;
-  mensagemSucesso: string = '';
-  mensagemErro: string = '';
   private readonly destroyRef = inject(DestroyRef);
 
 
@@ -42,17 +39,6 @@ export class PerfilComponent implements OnInit {
       this.novoNome = usuario.nome;
       this.novoEmail = usuario.email;
     }
-
-    this.notificacaoService.mensagem$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(mensagem => {
-        this.mensagemSucesso = mensagem;
-      });
-    this.notificacaoService.erro$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(mensagem => {
-        this.mensagemErro = mensagem;
-      });
   }
 
   // Método para alterar os dados do usuário
@@ -65,13 +51,13 @@ export class PerfilComponent implements OnInit {
 
     this.salvandoDados = true;
 
-    this.usuarioService.atualizarParcial(this.usuarioLogado.id, { nome: this.novoNome, email: this.novoEmail }).subscribe({
+    this.usuarioService.atualizarPerfil({ nome: this.novoNome.trim(), email: this.novoEmail.trim() }).subscribe({
       next: (usuarioAtualizado) => {
         this.usuarioLogado = usuarioAtualizado;
-        this.authService.salvarSessao(usuarioAtualizado);
+        this.authService.atualizarUsuario(usuarioAtualizado);
 
         this.salvandoDados = false;
-        this.notificacaoService.mostrarMensagem('Nome atualizado com sucesso');
+        this.notificacaoService.mostrarMensagem('Dados atualizados com sucesso');
       },
       error: (erro) => {
         this.salvandoDados = false;
@@ -82,17 +68,10 @@ export class PerfilComponent implements OnInit {
 
   // Método para alterar a senha do usuário
   alterarSenha() {
-    if (!this.usuarioLogado.id) return;
 
     // Verifica se todos os campos de senha foram preenchidos
     if (!this.senhaAtual || !this.novaSenha || !this.confirmarSenha) {
       this.notificacaoService.mostrarErro('Todos os campos de senha devem ser preenchidos');
-      return;
-    }
-
-    // Verifica se a nova senha e a confirmação coincidem
-    if (this.senhaAtual !== this.usuarioLogado.senha) {
-      this.notificacaoService.mostrarErro('A senha atual está incorreta');
       return;
     }
 
@@ -102,21 +81,23 @@ export class PerfilComponent implements OnInit {
       return;
     }
 
-    // Atualiza a senha do usuário
-    this.usuarioService.atualizarParcial(this.usuarioLogado.id, { senha: this.novaSenha }).subscribe({
-      next: (usuarioAtualizado) => {
-        this.usuarioLogado = usuarioAtualizado;
-        this.authService.salvarSessao(usuarioAtualizado);
+    this.alterandoSenha = true;
 
+    // Atualiza a senha do usuário
+    this.usuarioService.alterarSenha({ senhaAtual: this.senhaAtual, novaSenha: this.novaSenha }).subscribe({
+      next: () => {
         // Limpa os campos de senha após a atualização
         this.senhaAtual = '';
         this.novaSenha = '';
         this.confirmarSenha = '';
 
+        this.alterandoSenha = false;
         this.notificacaoService.mostrarMensagem('Senha atualizada com sucesso');
       },
       error: (erro) => {
-        this.notificacaoService.mostrarErro('Ocorreu um erro ao atualizar a senha');
+        this.alterandoSenha = false;
+
+        this.notificacaoService.mostrarErro(erro.status === 401 ? 'A senha atual incorreta' : 'Ocorreu um erro ao atualizar a senha');
       }
     });
   }

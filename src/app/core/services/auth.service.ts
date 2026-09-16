@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { LoginResponse } from '../../models/dtos/login-response.dto';
 import { Usuario } from '../../models/usuario';
 
 @Injectable({
@@ -9,12 +10,12 @@ import { Usuario } from '../../models/usuario';
 })
 export class AuthService {
 
-  private readonly apiUrl = `${environment.apiUrl}/usuarios`;
-  
-  private usuarioSubject =
+  private readonly apiUrl = environment.apiUrl;
+
+  private readonly usuarioSubject =
     new BehaviorSubject<Usuario | null>(null);
 
-  usuario$ =
+  readonly usuario$ =
     this.usuarioSubject.asObservable();
 
   constructor(private http: HttpClient) {
@@ -22,14 +23,12 @@ export class AuthService {
     this.usuarioSubject.next(usuario);
   }
 
-  login(email: string, senha: string): Observable<Usuario | null> {
-    return this.http.get<Usuario[]>(`${this.apiUrl}?email=${encodeURIComponent(email)}`)
-      .pipe(
-        map(usuarios => usuarios.find(u => u.senha === senha) ?? null)
-      );
+  login(email: string, senha: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, senha })
   }
 
-  salvarSessao(usuario: Usuario): void {
+  salvarSessao(usuario: Usuario, token: string): void {
+    localStorage.setItem('token', token);
     localStorage.setItem('usuario', JSON.stringify(usuario));
     this.usuarioSubject.next(usuario);
   }
@@ -45,12 +44,18 @@ export class AuthService {
   }
 
   estaAutenticado(): boolean {
-    return !!this.obterUsuario();
+    return !!localStorage.getItem('token');
   }
 
   logout(): void {
+    localStorage.removeItem('token');
     localStorage.removeItem('usuario');
     this.usuarioSubject.next(null);
+  }
+
+  atualizarUsuario(usuario: Usuario): void {
+    localStorage.setItem('usuario', JSON.stringify(usuario));
+    this.usuarioSubject.next(usuario);
   }
 
 }

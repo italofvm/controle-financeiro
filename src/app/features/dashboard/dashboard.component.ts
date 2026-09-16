@@ -88,8 +88,9 @@ export class DashboardComponent implements OnInit {
     this.movimentacoesDoMes
       .filter(movimentacao => movimentacao.tipo === 'despesa')
       .forEach(movimentacao => {
-        const totalAtual = totais.get(movimentacao.categoria) ?? 0;
-        totais.set(movimentacao.categoria, totalAtual + movimentacao.valor);
+        const slug = this.obterSlugCategoria(movimentacao.categoria);
+        const totalAtual = totais.get(slug) ?? 0;
+        totais.set(slug, totalAtual + movimentacao.valor);
       });
 
     const maiorTotal = Math.max(...totais.values(), 0);
@@ -124,13 +125,21 @@ export class DashboardComponent implements OnInit {
     this.mesSelecionado = `${novoAno}-${novoMes}`;
   }
 
-  buscarCategoria(slug: string): Categoria {
-    return this.categorias.find(categoria => categoria.slug === slug) ?? {
-      id: slug,
-      nome: slug,
-      slug,
-      icone: 'ellipsis',
-      cor: 'gray'
+  buscarCategoria(referencia: unknown): Categoria {
+    const dados = this.obterDadosCategoria(referencia);
+    const categoriaEncontrada = this.categorias.find(categoria =>
+      categoria.slug === dados.slug ||
+      (!!dados.id && categoria.id === dados.id) ||
+      (!!dados.nome && categoria.nome === dados.nome)
+    );
+
+    return categoriaEncontrada ?? {
+      id: dados.id ?? dados.slug ?? 'outros',
+      nome: dados.nome ?? dados.slug ?? 'Outros',
+      slug: dados.slug ?? 'outros',
+      icon: dados.icon ?? dados.icone ?? 'ellipsis',
+      icone: dados.icone ?? dados.icon ?? 'ellipsis',
+      cor: dados.cor ?? 'gray'
     };
   }
 
@@ -145,5 +154,22 @@ export class DashboardComponent implements OnInit {
     return this.movimentacoesDoMes
       .filter(movimentacao => movimentacao.tipo === tipo)
       .reduce((total, movimentacao) => total + movimentacao.valor, 0);
+  }
+
+  private obterSlugCategoria(referencia: unknown): string {
+    const dados = this.obterDadosCategoria(referencia);
+    return dados.slug ?? dados.id ?? dados.nome ?? 'outros';
+  }
+
+  private obterDadosCategoria(referencia: unknown): Partial<Categoria> {
+    if (typeof referencia === 'string') {
+      return { slug: referencia };
+    }
+
+    if (referencia && typeof referencia === 'object') {
+      return referencia as Partial<Categoria>;
+    }
+
+    return {};
   }
 }

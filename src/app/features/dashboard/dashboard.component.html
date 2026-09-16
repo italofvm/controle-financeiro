@@ -113,7 +113,9 @@
                           [ngClass]="'categoria-icone--' + categoria.cor"
                         >
                           <svg
-                            [lucideIcon]="categoria.icone"
+                            [lucideIcon]="
+                              categoria.icone || categoria.icon || 'ellipsis'
+                            "
                             class="h-4 w-4"
                           ></svg>
                         </div>
@@ -197,15 +199,6 @@
             Ver análise completa
           </a>
         </article>
-      </div>
-    }
-
-    @if (mensagemErro) {
-      <div
-        class="mt-6 rounded-lg border border-red-300 bg-red-100 px-4 py-3 text-sm text-red-800"
-        role="alert"
-      >
-        {{ mensagemErro }}
       </div>
     }
   </div>

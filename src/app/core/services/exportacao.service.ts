@@ -49,7 +49,7 @@ export class ExportacaoService {
       return null;
     }
 
-    const { senha, ...usuarioExportado } = usuario;
+    const usuarioExportado = usuario;
     return usuarioExportado;
   }
 

@@ -1,74 +1,111 @@
 <section
-  class="flex h-screen flex-col items-center justify-center bg-gray-100 overflow-hidden"
+  class="relative flex h-screen flex-col items-center justify-center overflow-hidden bg-slate-950 px-4"
 >
-  <!-- Camada da Imagem de Fundo com Desfoque -->
+  <!-- Camada de gradiente atmosférico -->
   <div
-    class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c')] bg-cover bg-center blur-sm"
+    class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(59,130,246,0.18),_transparent_55%),radial-gradient(ellipse_at_bottom,_rgba(99,102,241,0.15),_transparent_55%)]"
   ></div>
 
-  <!-- Camada de sobreposição escurecida (opcional, para dar mais contraste) -->
-  <div class="absolute inset-0 bg-black/40"></div>
-
+  <!-- Orbes flutuantes decorativos -->
   <div
-    class="relative z-10 w-full max-w-sm rounded-lg bg-gray-100 p-8 shadow-md"
+    class="auth-blob pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-blue-600/30 blur-3xl"
+  ></div>
+  <div
+    class="auth-blob auth-blob--delay pointer-events-none absolute -bottom-32 -right-16 h-96 w-96 rounded-full bg-indigo-600/30 blur-3xl"
+  ></div>
+
+  <!-- Cartão de vidro -->
+  <div
+    class="auth-card relative z-10 w-full max-w-sm rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl shadow-black/40 backdrop-blur-xl"
   >
-    <div class="mb-6 pb-4 border-b border-gray-300">
-      <h2 class="text-3xl text-gray-500 font-semibold">Faça Login</h2>
-      <p class="text-gray-400">
+    <div
+      class="mb-6 flex flex-col items-center border-b border-white/10 pb-6 text-center"
+    >
+      <span
+        class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-900/40"
+      >
+        <svg lucideIcon="wallet-cards" class="h-6 w-6 text-white"></svg>
+      </span>
+      <h2 class="text-2xl font-semibold text-white">Faça Login</h2>
+      <p class="mt-1 text-sm text-slate-400">
         Insira suas credenciais para acessar sua conta.
       </p>
     </div>
+
     <form [formGroup]="loginForm" (ngSubmit)="entrar()">
-      <div
-        class="flex min-h-11 items-center rounded-lg border border-gray-300 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500"
-      >
+      <div class="auth-field">
         <label
           for="email"
-          class="mb-1 p-4 block text-sm font-medium text-gray-600 cursor-pointer"
+          class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-400"
           >Email</label
         >
-        <input
-          type="email"
-          id="email"
-          name="email"
-          formControlName="email"
-          class="w-full rounded-r-lg p-2.5 text-sm text-gray-800 outline-none placeholder-gray-400"
-        />
+        <div
+          class="flex items-center rounded-xl border border-white/10 bg-white/5 px-3 transition focus-within:border-blue-400/60 focus-within:ring-2 focus-within:ring-blue-400/20"
+        >
+          <svg lucideIcon="mail" class="h-4 w-4 shrink-0 text-slate-500"></svg>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            formControlName="email"
+            placeholder="seu@email.com"
+            class="w-full bg-transparent p-2.5 pl-2.5 text-sm text-white outline-none placeholder-slate-500"
+          />
+        </div>
       </div>
-      <div
-        class="flex min-h-11 items-center rounded-lg border border-gray-300 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 mt-4"
-      >
+
+      <div class="auth-field mt-4">
         <label
           for="senha"
-          class="mb-1 p-4 block text-sm font-medium text-gray-600 cursor-pointer"
+          class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-400"
           >Senha</label
         >
-        <input
-          type="password"
-          id="senha"
-          name="senha"
-          formControlName="senha"
-          class="w-full rounded-r-lg p-2.5 text-sm text-gray-800 outline-none placeholder-gray-400"
-        />
-      </div>
-      <div>
-        <button
-          type="submit"
-          class="w-full rounded-lg bg-blue-600 py-5 mt-5 text-sm font-medium text-white transition hover:bg-blue-700 cursor-pointer"
+        <div
+          class="flex items-center rounded-xl border border-white/10 bg-white/5 px-3 transition focus-within:border-blue-400/60 focus-within:ring-2 focus-within:ring-blue-400/20"
         >
-          Login
-        </button>
+          <svg lucideIcon="lock" class="h-4 w-4 shrink-0 text-slate-500"></svg>
+          <input
+            [type]="mostrarSenha ? 'text' : 'password'"
+            id="senha"
+            name="senha"
+            formControlName="senha"
+            placeholder="Sua senha"
+            class="w-full bg-transparent p-2.5 pl-2.5 text-sm text-white outline-none placeholder-slate-500"
+          />
+          <button
+            type="button"
+            (click)="alternarVisibilidadeSenha()"
+            class="shrink-0 cursor-pointer text-slate-500 transition hover:text-slate-300"
+          >
+            <svg
+              [lucideIcon]="mostrarSenha ? 'eye-off' : 'eye'"
+              class="h-4 w-4"
+            ></svg>
+          </button>
+        </div>
       </div>
-      <p class="mt-4 text-sm text-gray-500 cursor-pointer">
+
+      <button
+        type="submit"
+        class="mt-6 w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3 text-sm font-medium text-white shadow-lg shadow-blue-900/40 transition hover:scale-[1.02] hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98]"
+      >
+        Login
+      </button>
+
+      <p class="mt-4 text-center text-sm text-slate-400">
         Ainda não tem uma conta?
-        <a routerLink="/cadastro" class="text-blue-600 hover:underline"
+        <a
+          routerLink="/cadastro"
+          class="font-medium text-blue-400 hover:text-blue-300 hover:underline"
           >Cadastre-se</a
         >
       </p>
     </form>
 
     @if (mensagemErro) {
-      <p class="mt-4 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
+      <p
+        class="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+      >
         {{ mensagemErro }}
       </p>
     }

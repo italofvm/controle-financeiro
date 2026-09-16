@@ -37,7 +37,7 @@
             class="categoria-icone"
             [ngClass]="'categoria-icone--' + categoria.cor"
           >
-            <svg [lucideIcon]="categoria.icone" class="h-5 w-5"></svg>
+            <svg [lucideIcon]="categoria.icon" class="h-5 w-5"></svg>
           </div>
 
           <button
@@ -53,9 +53,9 @@
           <div>
             <h2 class="font-semibold text-gray-900">{{ categoria.nome }}</h2>
             <p class="mt-1 text-xs text-gray-500">
-              {{ quantidadeMovimentacoes(categoria) }}
+              {{ quantidadeMovimentacoes(categoria.id) }}
               {{
-                quantidadeMovimentacoes(categoria) === 1
+                quantidadeMovimentacoes(categoria.id) === 1
                   ? "movimentação"
                   : "movimentações"
               }}
@@ -81,13 +81,4 @@
     (close)="fecharModal()"
     (confirm)="confirmarExclusao()"
   ></app-modal>
-
-  @if (mensagemErro) {
-    <div
-      class="fixed bottom-6 right-6 z-40 rounded-lg border border-red-300 bg-red-100 px-5 py-3 text-sm text-red-800 shadow-lg"
-      role="alert"
-    >
-      {{ mensagemErro }}
-    </div>
-  }
 </section>

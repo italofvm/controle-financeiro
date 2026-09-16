@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AtualizarMovimentacao } from '../../models/dtos/atualizar-movimentacao.dto';
+import { CriarMovimentacao } from '../../models/dtos/criar-movimentacao.dto';
 import { Movimentacao } from '../../models/movimentacao';
 
 @Injectable({
@@ -21,11 +23,11 @@ export class FinanceiroService {
     return this.http.get<Movimentacao>(`${this.apiUrl}/movimentacoes/${id}`);
   }
 
-  atualizar(movimentacao: Movimentacao): Observable<Movimentacao> {
-    return this.http.put<Movimentacao>(`${this.apiUrl}/movimentacoes/${movimentacao.id}`, movimentacao);
+  atualizar(id: string, dados: AtualizarMovimentacao): Observable<Movimentacao> {
+    return this.http.put<Movimentacao>(`${this.apiUrl}/movimentacoes/${id}`, dados);
   }
 
-  salvar(movimentacao: Omit<Movimentacao, 'id'>): Observable<Movimentacao> {
+  salvar(movimentacao: CriarMovimentacao): Observable<Movimentacao> {
     return this.http.post<Movimentacao>(`${this.apiUrl}/movimentacoes`, movimentacao);
   }
 

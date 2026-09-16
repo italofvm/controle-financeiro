@@ -40,7 +40,7 @@ describe('ConfiguracaoService', () => {
     const categoriasRequest = httpController.expectOne(`${environment.apiUrl}/categorias`);
     expect(categoriasRequest.request.method).toBe('GET');
     categoriasRequest.flush([
-      { id: '1', nome: 'Casa', slug: 'casa', icone: 'house', cor: 'orange' }
+      { id: '1', nome: 'Casa', slug: 'casa', icon: 'house', cor: 'orange' }
     ]);
 
     const deleteMovimentacaoRequest = httpController.expectOne(`${environment.apiUrl}/movimentacoes/1`);

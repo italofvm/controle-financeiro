@@ -52,8 +52,8 @@ export class ListaComponent implements OnInit {
     });
   }
 
-  quantidadeMovimentacoes(categoria: Categoria): number {
-    return this.movimentacoes.filter(item => item.categoria === categoria.slug).length;
+  quantidadeMovimentacoes(categoriaId: string): number {
+    return this.movimentacoes.filter(movimentacao => movimentacao.categoriaId === categoriaId).length;
   }
 
   abrirModal(categoria: Categoria, event: Event): void {
@@ -73,7 +73,7 @@ export class ListaComponent implements OnInit {
       return;
     }
 
-    this.categoriaService.deletar(this.categoriaSelecionada).subscribe({
+    this.categoriaService.deletar(this.categoriaSelecionada.id).subscribe({
       next: () => {
         this.categorias = this.categorias.filter(item => item.id !== this.categoriaSelecionada?.id);
         this.notificacaoService.mostrarMensagem('Categoria excluída com sucesso!');
