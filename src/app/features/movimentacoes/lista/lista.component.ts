@@ -42,7 +42,9 @@ export class ListaComponent implements OnInit {
     this.carregarCategorias();
     this.financeiroService.getMovimentacoes().subscribe({
       next: dados => {
-        this.movimentacoes = [...dados].reverse();
+        console.log('Movimentações recebidas:', dados);
+
+        this.movimentacoes = dados;
       },
       error: () => this.notificacaoService.mostrarErro('Não foi possível carregar as movimentações.')
     });
@@ -58,7 +60,7 @@ export class ListaComponent implements OnInit {
 
       const correspondeCategoria =
         !this.categoriaSelecionada ||
-        this.slugCategoria(movimentacao.categoria) === this.categoriaSelecionada;
+        movimentacao.categoriaId === this.categoriaSelecionada;
 
       const correspondeMes = !this.selectedMonth || movimentacao.data?.startsWith(this.selectedMonth);
 
@@ -120,7 +122,7 @@ export class ListaComponent implements OnInit {
     if (!this.movimentacaoSelecionada) {
       return;
     }
-    this.financeiroService.deletar(this.movimentacaoSelecionada).subscribe({
+    this.financeiroService.deletar(this.movimentacaoSelecionada.id).subscribe({
       next: () => {
         this.movimentacoes = this.movimentacoes.filter(m => m.id !== this.movimentacaoSelecionada!.id);
         this.notificacaoService.mostrarMensagem('Movimentação deletada com sucesso!');
@@ -139,15 +141,14 @@ export class ListaComponent implements OnInit {
     })
   }
 
-  nomeCategoria(referencia: unknown): string {
-    const dados = this.dadosCategoria(referencia);
-    const categoria = this.categorias.find(item =>
-      item.slug === dados.slug ||
-      (!!dados.id && item.id === dados.id) ||
-      (!!dados.nome && item.nome === dados.nome)
-    );
+  nomeCategoria(categoriaId: string | null | undefined): string {
+    if (!categoriaId) {
+      return 'Outros';
+    }
 
-    return categoria?.nome ?? dados.nome ?? dados.slug ?? 'Outros';
+    return this.categorias.find(
+      categoria => categoria.id === categoriaId
+    )?.nome ?? 'Outros';
   }
 
   private slugCategoria(referencia: unknown): string {

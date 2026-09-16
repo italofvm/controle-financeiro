@@ -24,14 +24,14 @@ export class FinanceiroService {
   }
 
   atualizar(id: string, dados: AtualizarMovimentacao): Observable<Movimentacao> {
-    return this.http.put<Movimentacao>(`${this.apiUrl}/movimentacoes/${id}`, dados);
+    return this.http.patch<Movimentacao>(`${this.apiUrl}/movimentacoes/${id}`, dados);
   }
 
   salvar(movimentacao: CriarMovimentacao): Observable<Movimentacao> {
     return this.http.post<Movimentacao>(`${this.apiUrl}/movimentacoes`, movimentacao);
   }
 
-  deletar(movimentacao: Movimentacao): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/movimentacoes/${movimentacao.id}`);
+  deletar(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/movimentacoes/${id}`);
   }
 }

@@ -43,7 +43,7 @@ export class CadastroComponent implements OnInit {
     this.camposFormulario = this.formBuilder.group<MovimentacaoFormControls>({
       descricao: this.formBuilder.control('', Validators.required),
       categoriaId: this.formBuilder.control('', Validators.required),
-      data: this.formBuilder.control('', Validators.required),
+      data: this.formBuilder.control(new Date().toISOString().slice(0, 10), Validators.required),
       tipo: this.formBuilder.control<'receita' | 'despesa'>('receita', Validators.required),
       valor: this.formBuilder.control(0, [Validators.required, Validators.min(0.01)])
     });
@@ -76,7 +76,7 @@ export class CadastroComponent implements OnInit {
         this.camposFormulario.patchValue({
           descricao: movimentacao.descricao,
           categoriaId: movimentacao.categoriaId ?? '',
-          data: movimentacao.data,
+          data: movimentacao.data?.slice(0, 10),
           tipo: movimentacao.tipo,
           valor: movimentacao.valor
         });
@@ -148,7 +148,7 @@ export class CadastroComponent implements OnInit {
     this.camposFormulario.reset({
       descricao: '',
       categoriaId: '',
-      data: '',
+      data: new Date().toISOString().slice(0, 10),
       tipo: 'receita',
       valor: 0
     });

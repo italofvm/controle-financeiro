@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, map, Observable, of, switchMap } from 'rxjs';
-import { CategoriaService } from './categoria.service';
 import { FinanceiroService } from './financeiro.service';
 
 @Injectable({
@@ -10,18 +9,15 @@ export class ConfiguracaoService {
 
   constructor(
     private financeiroService: FinanceiroService,
-    private categoriaService: CategoriaService
   ) { }
 
   limparTodosOsDados(): Observable<void> {
     return forkJoin({
       movimentacoes: this.financeiroService.getMovimentacoes(),
-      categorias: this.categoriaService.getCategorias()
     }).pipe(
-      switchMap(({ movimentacoes, categorias }) => {
+      switchMap(({ movimentacoes }) => {
         const exclusoes = [
-          ...movimentacoes.map(movimentacao => this.financeiroService.deletar(movimentacao)),
-          ...categorias.map(categoria => this.categoriaService.deletar(categoria.id))
+          ...movimentacoes.map(movimentacao => this.financeiroService.deletar(movimentacao.id)),
         ];
 
         if (!exclusoes.length) {

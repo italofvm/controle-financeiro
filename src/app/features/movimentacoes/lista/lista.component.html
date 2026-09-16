@@ -46,7 +46,7 @@
       <select
         aria-label="Filtrar por tipo"
         [(ngModel)]="tipoSelecionado"
-        class="h-11 min-w-0 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="h-11 min-w-0 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
       >
         <option value="">Todos os Tipos</option>
         <option value="receita">Receita</option>
@@ -60,12 +60,12 @@
         name="categoria"
         aria-label="Filtrar por categoria"
         [(ngModel)]="categoriaSelecionada"
-        class="h-11 min-w-0 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="h-11 min-w-0 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
       >
-        <option value="" disable>Todas Categorias</option>
-        @for (categoria of categorias; track categoria.id) {
-          <option [value]="categoria.slug">{{ categoria.nome }}</option>
-        }
+        <option value="">Todas Categorias</option>
+        <option *ngFor="let categoria of categorias" [value]="categoria.id">
+          {{ categoria.nome }}
+        </option>
       </select>
 
       <!--Filtro de Data-->
@@ -73,7 +73,7 @@
         type="month"
         aria-label="Filtrar por mês"
         [(ngModel)]="selectedMonth"
-        class="col-span-2 h-11 min-w-0 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 lg:col-span-1"
+        class="col-span-2 h-11 min-w-0 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 lg:col-span-1 cursor-pointer"
       />
     </div>
   </div>
@@ -92,7 +92,7 @@
               {{ movimentacao.descricao }}
             </h2>
             <p class="mt-1 text-xs capitalize text-gray-500">
-              {{ nomeCategoria(movimentacao.categoria) }}
+              {{ nomeCategoria(movimentacao.categoriaId) }}
             </p>
           </div>
           <span
