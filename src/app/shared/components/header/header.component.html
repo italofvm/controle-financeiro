@@ -28,7 +28,7 @@
 
     @if (isOpen) {
       <div
-        class="absolute right-0 z-10 mt-4 w-48 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
+        class="dropdown-enter absolute right-0 z-10 mt-4 w-48 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
         role="menu"
       >
         <button
@@ -36,7 +36,7 @@
           (click)="fecharDropdown()"
           role="menuitem"
           [routerLink]="'/perfil'"
-          class="block w-full cursor-pointer px-4 py-3 text-left text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700 focus:bg-blue-50 focus:outline-none"
+          class="block w-full cursor-pointer px-4 py-3 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 focus:bg-blue-50 focus:outline-none transition-all duration-150 active:scale-95"
         >
           Meu perfil
         </button>
@@ -45,7 +45,7 @@
           (click)="fecharDropdown()"
           role="menuitem"
           [routerLink]="'/configuracoes'"
-          class="block w-full cursor-pointer px-4 py-3 text-left text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700 focus:bg-blue-50 focus:outline-none"
+          class="block w-full cursor-pointer px-4 py-3 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 focus:bg-blue-50 focus:outline-none transition-all duration-150 active:scale-95"
         >
           Configurações
         </button>
@@ -54,7 +54,7 @@
           (click)="fecharDropdown()"
           (click)="logout()"
           role="menuitem"
-          class="block w-full cursor-pointer px-4 py-3 text-left text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700 focus:bg-blue-50 focus:outline-none"
+          class="block w-full cursor-pointer px-4 py-3 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 focus:bg-blue-50 focus:outline-none transition-all duration-150 active:scale-95"
         >
           Sair
         </button>

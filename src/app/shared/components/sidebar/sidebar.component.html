@@ -22,7 +22,12 @@
         >
 
         @if (!isCollapsed) {
-          <h2 class="font-semibold text-blue-500">Meu Controle Financeiro</h2>
+          <h2
+            animate.leave="sidebar-content-leave"
+            class="font-semibold text-blue-500 sidebar-content-enter"
+          >
+            Meu Controle Financeiro
+          </h2>
         }
       </div>
 
@@ -45,7 +50,11 @@
         ><svg lucideIcon="layout-dashboard"></svg>
 
         @if (!isCollapsed) {
-          <span>Dashboard</span>
+          <span
+            animate.leave="sidebar-content-leave"
+            class="sidebar-content-enter"
+            >Dashboard</span
+          >
         }
       </a>
       <a
@@ -54,7 +63,11 @@
         class="flex items-center gap-3 rounded-lg p-3 text-gray-700 transition-colors duration-300 hover:bg-blue-600 hover:text-white"
         ><svg lucideIcon="arrow-left-right"></svg>
         @if (!isCollapsed) {
-          <span>Movimentações</span>
+          <span
+            animate.leave="sidebar-content-leave"
+            class="sidebar-content-enter"
+            >Movimentações</span
+          >
         }
       </a>
       <a
@@ -64,7 +77,11 @@
         ><svg lucideIcon="chart-bar-stacked"></svg>
 
         @if (!isCollapsed) {
-          <span>Categorias</span>
+          <span
+            animate.leave="sidebar-content-leave"
+            class="sidebar-content-enter"
+            >Categorias</span
+          >
         }
       </a>
       <a
@@ -74,7 +91,11 @@
         ><svg lucideIcon="settings"></svg>
 
         @if (!isCollapsed) {
-          <span>Configurações</span>
+          <span
+            animate.leave="sidebar-content-leave"
+            class="sidebar-content-enter"
+            >Configurações</span
+          >
         }
       </a>
     </nav>
@@ -84,8 +105,9 @@
   <div class="p-4 flex justify-center">
     @if (!isCollapsed) {
       <button
+        animate.leave="sidebar-content-leave"
         [routerLink]="'/movimentacoes/cadastro'"
-        class="sidebar-new-movement w-full mb-3 p-3 flex items-center gap-2 text-white bg-blue-500 rounded-2xl hover:bg-blue-600 cursor-pointer"
+        class="sidebar-new-movement sidebar-content-enter w-full mb-3 p-3 flex items-center gap-2 text-white bg-blue-500 rounded-2xl hover:bg-blue-600 cursor-pointer"
       >
         <svg lucideIcon="plus"></svg> Nova movimentação
       </button>

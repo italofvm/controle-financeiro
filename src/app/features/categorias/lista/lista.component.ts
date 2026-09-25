@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideDynamicIcon } from '@lucide/angular';
-import { forkJoin } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { CategoriaService } from '../../../core/services/categoria.service';
 import { FinanceiroService } from '../../../core/services/financeiro.service';
 import { NotificacaoService } from '../../../core/services/notificacao.service';
@@ -22,6 +22,7 @@ export class ListaComponent implements OnInit {
   categoriaSelecionada: Categoria | null = null;
   isModalOpen = false;
   carregando = true;
+  excluindo = false;
   mensagemErro = '';
 
   constructor(
@@ -37,19 +38,22 @@ export class ListaComponent implements OnInit {
   carregarDados(): void {
     forkJoin({
       categorias: this.categoriaService.getCategorias(),
-      movimentacoes: this.financeiroService.getMovimentacoes()
-    }).subscribe({
-      next: ({ categorias, movimentacoes }) => {
-        this.categorias = categorias;
-        this.movimentacoes = movimentacoes;
+      movimentacoes: this.financeiroService.getMovimentacoes(1, 100)
+    }).pipe(
+      finalize(() => {
         this.carregando = false;
-      },
-      error: () => {
-        this.carregando = false;
-        this.mensagemErro = 'Não foi possível carregar as categorias.';
-        this.notificacaoService.mostrarErro(this.mensagemErro);
-      }
-    });
+      })
+    )
+      .subscribe({
+        next: ({ categorias, movimentacoes }) => {
+          this.categorias = categorias;
+          this.movimentacoes = movimentacoes.dados;
+        },
+        error: () => {
+          this.mensagemErro = 'Não foi possível carregar as categorias.';
+          this.notificacaoService.mostrarErro(this.mensagemErro);
+        }
+      });
   }
 
   quantidadeMovimentacoes(categoriaId: string): number {
@@ -73,6 +77,7 @@ export class ListaComponent implements OnInit {
       return;
     }
 
+    this.excluindo = true;
     this.categoriaService.deletar(this.categoriaSelecionada.id).subscribe({
       next: () => {
         this.categorias = this.categorias.filter(item => item.id !== this.categoriaSelecionada?.id);

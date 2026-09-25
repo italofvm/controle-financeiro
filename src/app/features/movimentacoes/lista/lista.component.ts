@@ -2,175 +2,239 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { LucideDynamicIcon } from "@lucide/angular";
+import { LucideDynamicIcon } from '@lucide/angular';
+import { debounceTime, distinctUntilChanged, finalize, Subject, Subscription } from 'rxjs';
+
 import { CategoriaService } from '../../../core/services/categoria.service';
 import { FinanceiroService } from '../../../core/services/financeiro.service';
 import { NotificacaoService } from '../../../core/services/notificacao.service';
+
 import { Categoria } from '../../../models/categoria';
 import { Movimentacao } from '../../../models/movimentacao';
+
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-lista',
-  imports: [LucideDynamicIcon, FormsModule, CommonModule, ModalComponent, RouterLink],
+  imports: [
+    LucideDynamicIcon,
+    FormsModule,
+    CommonModule,
+    ModalComponent,
+    RouterLink
+  ],
   templateUrl: './lista.component.html',
   styleUrl: './lista.component.scss'
 })
 export class ListaComponent implements OnInit {
 
   movimentacoes: Movimentacao[] = [];
-  paginaAtual: number = 1;
-  itensPorPagina: number = 6;
   categorias: Categoria[] = [];
 
-  termoPesquisa: string = '';
-  tipoSelecionado: string = '';
-  categoriaSelecionada: string = '';
-  selectedMonth: string = new Date().toISOString().slice(0, 7); // Formato YYYY-MM
+  paginaAtual = 1;
+  itensPorPagina = 6;
+  totalPaginas = 0;
+  totalItens = 0;
 
-  isModalOpen: boolean = false;
+  termoPesquisa = '';
+  tipoSelecionado = '';
+  categoriaSelecionada = '';
+
+  selectedMonth = new Date()
+    .toISOString()
+    .slice(0, 7);
+
+  carregando = false;
+
+  isModalOpen = false;
   movimentacaoSelecionada: Movimentacao | null = null;
-  mensagemSucesso: string = '';
-  mensagemErro: string = '';
+  private buscaSubject = new Subject<string>();
+  private carregamentoMovimentacoes?: Subscription;
 
-  constructor(private financeiroService: FinanceiroService,
+  constructor(
+    private financeiroService: FinanceiroService,
     private notificacaoService: NotificacaoService,
     private categoriaService: CategoriaService
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.carregarCategorias();
-    this.financeiroService.getMovimentacoes().subscribe({
-      next: dados => {
-        console.log('Movimentações recebidas:', dados);
+    this.carregarMovimentacoes();
 
-        this.movimentacoes = dados;
-      },
-      error: () => this.notificacaoService.mostrarErro('Não foi possível carregar as movimentações.')
-    });
+    this.buscaSubject
+      .pipe(
+        debounceTime(350),
+        distinctUntilChanged()
+      )
+      .subscribe(() => {
+        this.paginaAtual = 1;
+        this.carregarMovimentacoes();
+      })
   }
 
-  get movimentacoesFiltradas(): Movimentacao[] {
-    return this.movimentacoes.filter(movimentacao => {
-      const pesquisa = this.termoPesquisa.toLowerCase().trim();
-
-      const correspondePesquisa = !pesquisa || movimentacao.descricao.toLowerCase().includes(pesquisa);
-
-      const correspondeTipo = !this.tipoSelecionado || movimentacao.tipo === this.tipoSelecionado;
-
-      const correspondeCategoria =
-        !this.categoriaSelecionada ||
-        movimentacao.categoriaId === this.categoriaSelecionada;
-
-      const correspondeMes = !this.selectedMonth || movimentacao.data?.startsWith(this.selectedMonth);
-
-      return (
-        correspondePesquisa &&
-        correspondeTipo &&
-        correspondeCategoria &&
-        correspondeMes
-      );
-    });
+  aoPesquisar(valor: string): void {
+    this.termoPesquisa = valor;
+    this.buscaSubject.next(valor.trim());
   }
 
-  // Sistema de paginação
-  get totalPaginas(): number {
-    return Math.ceil(this.movimentacoesFiltradas.length / this.itensPorPagina);
+  carregarMovimentacoes(): void {
+    this.carregamentoMovimentacoes?.unsubscribe();
+    this.carregando = true;
+
+    this.carregamentoMovimentacoes = this.financeiroService
+      .getMovimentacoes(
+        this.paginaAtual,
+        this.itensPorPagina,
+        this.tipoSelecionado || undefined,
+        this.categoriaSelecionada || undefined,
+        this.selectedMonth || undefined,
+        this.termoPesquisa || undefined
+      )
+      .pipe(
+        finalize(() => {
+          this.carregando = false;
+        })
+      )
+      .subscribe({
+        next: response => {
+          this.movimentacoes = response.dados;
+
+          this.paginaAtual =
+            response.paginacao.paginaAtual;
+
+          this.itensPorPagina =
+            response.paginacao.itensPorPagina;
+
+          this.totalItens =
+            response.paginacao.totalItens;
+
+          this.totalPaginas =
+            response.paginacao.totalPaginas;
+        },
+
+        error: () => {
+          this.notificacaoService.mostrarErro(
+            'Não foi possível carregar as movimentações.'
+          );
+        }
+      });
   }
 
-  get movimentacoesPaginadas(): Movimentacao[] {
-    const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
-    const fim = inicio + this.itensPorPagina;
+  carregarCategorias(): void {
+    this.categoriaService
+      .getCategorias()
+      .subscribe({
+        next: categorias => {
+          this.categorias = categorias;
+        },
 
-    return this.movimentacoesFiltradas.slice(inicio, fim);
+        error: () => {
+          this.notificacaoService.mostrarErro(
+            'Não foi possível carregar as categorias.'
+          );
+        }
+      });
   }
 
   get paginas(): number[] {
-    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+    return Array.from(
+      { length: this.totalPaginas },
+      (_, i) => i + 1
+    );
   }
 
-  irParaPagina(pagina: number) {
+  irParaPagina(pagina: number): void {
+    if (
+      pagina < 1 ||
+      pagina > this.totalPaginas ||
+      pagina === this.paginaAtual
+    ) {
+      return;
+    }
+
     this.paginaAtual = pagina;
+    this.carregarMovimentacoes();
   }
 
-  proximaPagina() {
-    if (this.paginaAtual < this.totalPaginas) {
-      this.paginaAtual++;
+  proximaPagina(): void {
+    if (this.paginaAtual >= this.totalPaginas) {
+      return;
     }
+
+    this.paginaAtual++;
+    this.carregarMovimentacoes();
   }
 
-  paginaAnterior() {
-    if (this.paginaAtual > 1) {
-      this.paginaAtual--;
+  paginaAnterior(): void {
+    if (this.paginaAtual <= 1) {
+      return;
     }
+
+    this.paginaAtual--;
+    this.carregarMovimentacoes();
   }
 
-  // Função para deletar uma movimentação
-
-  abrirModal(movimentacao: Movimentacao) {
+  abrirModal(movimentacao: Movimentacao): void {
     this.movimentacaoSelecionada = movimentacao;
     this.isModalOpen = true;
   }
 
-  fecharModal() {
+  fecharModal(): void {
     this.isModalOpen = false;
     this.movimentacaoSelecionada = null;
   }
 
-
-  confirmarExclusao() {
+  confirmarExclusao(): void {
     if (!this.movimentacaoSelecionada) {
       return;
     }
-    this.financeiroService.deletar(this.movimentacaoSelecionada.id).subscribe({
-      next: () => {
-        this.movimentacoes = this.movimentacoes.filter(m => m.id !== this.movimentacaoSelecionada!.id);
-        this.notificacaoService.mostrarMensagem('Movimentação deletada com sucesso!');
-        this.fecharModal();
-      },
-      error: () => this.notificacaoService.mostrarErro('Não foi possível excluir a movimentação.')
-    });
+
+    const id = this.movimentacaoSelecionada.id;
+
+    this.financeiroService
+      .deletar(id)
+      .subscribe({
+        next: () => {
+          this.notificacaoService.mostrarMensagem(
+            'Movimentação deletada com sucesso!'
+          );
+
+          this.fecharModal();
+
+          if (
+            this.movimentacoes.length === 1 &&
+            this.paginaAtual > 1
+          ) {
+            this.paginaAtual--;
+          }
+
+          this.carregarMovimentacoes();
+        },
+
+        error: () => {
+          this.notificacaoService.mostrarErro(
+            'Não foi possível excluir a movimentação.'
+          );
+        }
+      });
   }
 
-  carregarCategorias(): void {
-    this.categoriaService.getCategorias().subscribe({
-      next: categorias => {
-        this.categorias = categorias;
-      },
-      error: () => this.notificacaoService.mostrarErro('Não foi possível carregar as categorias.')
-    })
-  }
-
-  nomeCategoria(categoriaId: string | null | undefined): string {
+  nomeCategoria(
+    categoriaId: string | null | undefined
+  ): string {
     if (!categoriaId) {
       return 'Outros';
     }
 
-    return this.categorias.find(
-      categoria => categoria.id === categoriaId
-    )?.nome ?? 'Outros';
-  }
-
-  private slugCategoria(referencia: unknown): string {
-    const dados = this.dadosCategoria(referencia);
-    const categoria = this.categorias.find(item =>
-      item.slug === dados.slug ||
-      (!!dados.id && item.id === dados.id) ||
-      (!!dados.nome && item.nome === dados.nome)
+    return (
+      this.categorias.find(
+        categoria => categoria.id === categoriaId
+      )?.nome ?? 'Outros'
     );
-
-    return categoria?.slug ?? dados.slug ?? dados.id ?? dados.nome ?? 'outros';
   }
 
-  private dadosCategoria(referencia: unknown): Partial<Categoria> {
-    if (typeof referencia === 'string') {
-      return { slug: referencia };
-    }
-
-    if (referencia && typeof referencia === 'object') {
-      return referencia as Partial<Categoria>;
-    }
-
-    return {};
+  aplicarFiltros(): void {
+    this.paginaAtual = 1;
+    this.carregarMovimentacoes();
   }
 }

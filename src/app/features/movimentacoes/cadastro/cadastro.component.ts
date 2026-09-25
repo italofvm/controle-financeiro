@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 import { CategoriaService } from '../../../core/services/categoria.service';
 import { FinanceiroService } from '../../../core/services/financeiro.service';
 import { NotificacaoService } from '../../../core/services/notificacao.service';
@@ -31,6 +32,7 @@ export class CadastroComponent implements OnInit {
   idMovimentacao?: string;
   isModalOpen: boolean = false;
   categorias: Categoria[] = [];
+  salvando: boolean = false;
 
   constructor(
     private financeiroService: FinanceiroService,
@@ -86,12 +88,6 @@ export class CadastroComponent implements OnInit {
   }
 
   salvarMovimentacao() {
-
-    console.log(this.camposFormulario.getRawValue());
-    console.log(this.camposFormulario.valid);
-    console.log(this.camposFormulario.errors);
-    console.log(this.camposFormulario.controls);
-
     this.camposFormulario.markAllAsTouched();
 
     if (this.camposFormulario.invalid) {
@@ -107,20 +103,24 @@ export class CadastroComponent implements OnInit {
 
   cadastrarMovimentacao(): void {
     const movimentacao = this.criarMovimentacaoDoFormulario();
-    this.financeiroService.salvar(movimentacao).subscribe({
-      next: () => {
-        this.isModalOpen = true;
-        this.notificacaoService.mostrarMensagem('Movimentação cadastrada com sucesso!');
-      },
-      error: () => this.notificacaoService.mostrarErro('Não foi possível cadastrar a movimentação.')
-    });
+
+    this.salvando = true;
+    this.financeiroService.salvar(movimentacao)
+      .pipe(finalize(() => this.salvando = false))
+      .subscribe({
+        next: () => {
+          this.isModalOpen = true;
+          this.notificacaoService.mostrarMensagem('Movimentação cadastrada com sucesso!');
+        },
+        error: () => this.notificacaoService.mostrarErro('Não foi possível cadastrar a movimentação.')
+      });
   }
 
   private criarMovimentacaoDoFormulario(): CriarMovimentacao {
     return this.camposFormulario.getRawValue();
   }
 
-  atualizarMovimentacao() {
+  atualizarMovimentacao(): void {
     if (!this.idMovimentacao) {
       return;
     }
@@ -128,14 +128,16 @@ export class CadastroComponent implements OnInit {
     const dados: AtualizarMovimentacao =
       this.camposFormulario.getRawValue();
 
-
-    this.financeiroService.atualizar(this.idMovimentacao, dados).subscribe({
-      next: () => {
-        this.notificacaoService.mostrarMensagem('Movimentação atualizada com sucesso!');
-        this.router.navigate(['/movimentacoes']);
-      },
-      error: () => this.notificacaoService.mostrarErro('Não foi possível atualizar a movimentação.')
-    });
+    this.salvando = true;
+    this.financeiroService.atualizar(this.idMovimentacao, dados)
+      .pipe(finalize(() => this.salvando = false))
+      .subscribe({
+        next: () => {
+          this.notificacaoService.mostrarMensagem('Movimentação atualizada com sucesso!');
+          this.router.navigate(['/movimentacoes']);
+        },
+        error: () => this.notificacaoService.mostrarErro('Não foi possível atualizar a movimentação.')
+      });
   }
 
   isCampoInvalido(nomeCampo: string): boolean {

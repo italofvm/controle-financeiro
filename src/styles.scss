@@ -22,6 +22,33 @@ body {
 	background-color: #030712;
 }
 
+.dark .bg-gray-200 {
+  background-color: #1f2937;
+}
+
+.dark .hover\:bg-gray-200:hover,
+.dark .focus\:bg-gray-200:focus {
+  background-color: #1f2937;
+}
+
+.dark .bg-blue-50,
+.dark [class~="has-[:checked]:bg-blue-50"] {
+  background-color: #172554;
+}
+
+.dark .bg-red-50,
+.dark [class~="has-[:checked]:bg-red-50"] {
+  background-color: #450a0a;
+}
+
+.dark .bg-green-100 {
+  background-color: #052e16;
+}
+
+.dark .bg-red-100 {
+  background-color: #450a0a;
+}
+
 .dark .bg-white {
 	background-color: #111827;
 }
@@ -46,6 +73,24 @@ body {
 .dark .text-gray-900,
 .dark .text-gray-950 {
 	color: #f9fafb;
+}
+
+.dark .text-blue-700,
+.dark [class~="has-[:checked]:text-blue-700"] {
+  color: #93c5fd;
+}
+
+.dark .text-red-600 {
+  color: #f87171;
+}
+
+.dark .text-red-700,
+.dark [class~="has-[:checked]:text-red-700"] {
+  color: #fca5a5;
+}
+
+.dark .text-green-600 {
+  color: #4ade80;
 }
 
 .dark .hover\:bg-blue-50:hover,
@@ -73,4 +118,85 @@ body {
 .dark option {
 	background-color: #111827;
 	color: #f9fafb;
+}
+
+@keyframes pageEnter {
+  from{
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: pageEnter 180ms ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes modalOverlayEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes modalContentEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-overlay-enter {
+  animation: modalOverlayEnter 180ms ease-out;
+}
+.modal-content-enter {
+  animation: modalContentEnter 200ms ease-out;
+}
+
+@keyframes dropdownEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-enter {
+  animation: dropdownEnter 200ms ease-out;
+}
+
+@media(prefers-reduced-motion: reduce) {
+  .page-enter,
+  .animate-in,
+  .modal-overlay-enter,
+  .modal-content-enter,
+  .dropdown-enter {
+    animation: none;
+  }
 }

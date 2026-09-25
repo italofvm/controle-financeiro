@@ -44,8 +44,6 @@ export class CadastroComponent implements OnInit {
   isEditando = false;
   isModalOpen = false;
   idCategoria?: string;
-  mensagemSucesso = '';
-  mensagemErro = '';
 
   constructor(
     private categoriaService: CategoriaService,

@@ -30,16 +30,24 @@ describe('ListaComponent de movimentações', () => {
     fixture.detectChanges();
 
     const request = httpController.expectOne(`${environment.apiUrl}/movimentacoes`);
-    request.flush([
-      {
-        id: '1',
-        descricao: 'Supermercado',
-        categoria: 'alimentacao',
-        data: '2026-09-04',
-        tipo: 'despesa',
-        valor: 150
+    request.flush({
+      dados: [
+        {
+          id: '1',
+          descricao: 'Supermercado',
+          categoria: 'alimentacao',
+          data: '2026-09-04',
+          tipo: 'despesa',
+          valor: 150
+        }
+      ],
+      paginacao: {
+        paginaAtual: 1,
+        itensPorPagina: 6,
+        totalItens: 1,
+        totalPaginas: 1
       }
-    ]);
+    });
     fixture.detectChanges();
 
     const elemento = fixture.nativeElement as HTMLElement;

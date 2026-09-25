@@ -28,13 +28,13 @@ export class ExportacaoService {
 
   exportarDados(): Observable<void> {
     return forkJoin({
-      movimentacoes: this.financeiroService.getMovimentacoes(),
+      movimentacoes: this.financeiroService.getMovimentacoes(1, 100),
       categorias: this.categoriaService.getCategorias()
     }).pipe(
       tap(({ movimentacoes, categorias }) => {
         this.baixarArquivo({
           usuario: this.obterUsuarioExportado(),
-          movimentacoes,
+          movimentacoes: movimentacoes.dados,
           categorias
         });
       }),

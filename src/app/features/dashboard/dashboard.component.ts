@@ -45,11 +45,11 @@ export class DashboardComponent implements OnInit {
 
   carregarDashboard(): void {
     forkJoin({
-      movimentacoes: this.financeiroService.getMovimentacoes(),
+      movimentacoes: this.financeiroService.getMovimentacoes(1, 100),
       categorias: this.categoriaService.getCategorias()
     }).subscribe({
       next: ({ movimentacoes, categorias }) => {
-        this.movimentacoes = movimentacoes;
+        this.movimentacoes = movimentacoes.dados;
         this.categorias = categorias;
         this.carregando = false;
       },

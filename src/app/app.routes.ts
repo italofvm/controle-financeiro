@@ -70,6 +70,10 @@ export const routes: Routes = [
       path: 'perfil',
       loadComponent: () => import('./features/perfil/perfil.component').then(m => m.PerfilComponent),
       data: { title: 'Meu Perfil' }
+    },
+    {
+      path: '**',
+      redirectTo: 'dashboard'
     }
     ]
   },

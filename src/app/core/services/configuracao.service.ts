@@ -13,12 +13,11 @@ export class ConfiguracaoService {
 
   limparTodosOsDados(): Observable<void> {
     return forkJoin({
-      movimentacoes: this.financeiroService.getMovimentacoes(),
+      movimentacoes: this.financeiroService.getMovimentacoes(1, 100),
     }).pipe(
       switchMap(({ movimentacoes }) => {
-        const exclusoes = [
-          ...movimentacoes.map(movimentacao => this.financeiroService.deletar(movimentacao.id)),
-        ];
+        const exclusoes = movimentacoes.dados.map((movimentacao) =>
+          this.financeiroService.deletar(movimentacao.id));
 
         if (!exclusoes.length) {
           return of(void 0);

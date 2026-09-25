@@ -40,7 +40,14 @@ export class AuthService {
       return null;
     }
 
-    return JSON.parse(usuario);
+    try {
+
+      return JSON.parse(usuario) as Usuario;
+    }
+    catch {
+      return null;
+    }
+
   }
 
   estaAutenticado(): boolean {
